@@ -16,9 +16,10 @@ class Ilink < Sinatra::Base
 		slim :weathergrid, :layout => :layout
 	end
 
-	get "/weather" do
+	get "/weather/" do
 		weather = I::Weather.new
-		weather.get.to_json
+		(weather.get).to_json
+		# "hello"
 	end
 
 end
