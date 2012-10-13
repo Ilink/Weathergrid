@@ -12,7 +12,6 @@ function col_iter($wrapper, callback){
 
 function boxes_iter($wrapper, callback){
 	var col = 0, row = 0;
-	console.log($wrapper.find('.col'))
 	$wrapper.find('.col').each(function(col, el){
 		$(el).children().each(function(row, item){
 			callback.call(this, $(item), col, row);

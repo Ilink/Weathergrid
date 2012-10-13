@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'slim'
+require 'json'
 
 require_relative 'weather'
 
@@ -16,8 +17,9 @@ class Ilink < Sinatra::Base
 		slim :weathergrid, :layout => :layout
 	end
 
-	get "/weather/" do
-		weather = I::Weather.new
+	get "/weather.json" do
+		content_type 'json', :charset => 'utf-8'
+		weather = Weather.new
 		(weather.get).to_json
 		# "hello"
 	end
