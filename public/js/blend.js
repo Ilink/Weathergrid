@@ -13,8 +13,6 @@ Opactiy is the amount of top mixed with bottom.
 
 The opactiy is not working, obviously.
 It should be partway between the top value and the bottom value.
-
-
 */
 
 blend.interp = function(a, b, percent){
@@ -50,10 +48,7 @@ blend.color = function(top, bottom, opacity){
 
 	return {
 		h: blend.interp(bottom.h, top.h, opacity),
-		// h: bottom.h,
 		s: blend.interp(bottom.s, top.s, opacity),
-		// s: bottom.s,
 		v: bottom.v
-		// v: blend.interp(bottom.v, t, opacity)
 	};
 };
