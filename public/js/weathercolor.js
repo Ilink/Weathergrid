@@ -14,7 +14,7 @@ function Weathercolor(){
 
 	function make_base(i, row, col, temp){
 		var percent = i * 100 % golden_ratio_conjugate * 100;
-		var fitted = fit_bound(temp, 0, 100, 180, 280);
+		var fitted = fit_bound(temp, 0, 100, 180, 270);
 
 		return {
 			h: fitted + percent, // makes a nice subtle gradient
