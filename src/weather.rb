@@ -1,14 +1,29 @@
 require 'net/http'
+require_relative 'util'
 
 # module I
 	class Weather
 
-		def initialize
+		def initialize(params = Hash.new)
 			@api_key = '741f676c94234130120910'
+			@params = params
+		end
+
+		def get_url
+			base = 'http://free.worldweatheronline.com/feed/weather.ashx'
+			params = {
+				:format => 'json',
+				:num_of_days => 1,
+				:key => '741f676c94234130120910',
+				:q => @params[:coords]
+			}
+
+			base = base + I::Util.to_query(params)
 		end
 
 		def get
-			uri = URI('http://free.worldweatheronline.com/feed/weather.ashx?q=san+francisco&format=json&num_of_days=1&key=741f676c94234130120910')
+			uri = URI(get_url)
+
 			resp = Net::HTTP.get(uri)
 			resp = JSON.parse(resp)
 

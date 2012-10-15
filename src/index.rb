@@ -6,11 +6,15 @@ require_relative 'weather'
 
 class Ilink < Sinatra::Base
 
-  set :views, File.join(File.dirname(__FILE__), '..', 'views')
-  set :public_folder, File.join(File.dirname(__FILE__), '..', 'public')
+	configure :production, :development do
+		enable :logging
+	end
+
+	set :views, File.join(File.dirname(__FILE__), '..', 'views')
+	set :public_folder, File.join(File.dirname(__FILE__), '..', 'public')
 
 	get "/" do
-		"index"
+		logger.info "root path"
 	end
 
 	get "/weather/grid" do
@@ -19,7 +23,7 @@ class Ilink < Sinatra::Base
 
 	get "/weather.json" do
 		content_type 'json', :charset => 'utf-8'
-		weather = Weather.new
+		weather = Weather.new(params)
 		(weather.get).to_json
 		# "hello"
 	end

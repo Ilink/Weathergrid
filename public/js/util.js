@@ -6,6 +6,9 @@ function make_hsl(h,s,l){
 	return "hsl("+h+","+s+"%,"+l+"%)";
 }
 
-function fit_bound(min1, max1, x, min2, max2){
-	return (max1 - min1) * (x-min1) / (max2 - min2) + min1;
+/*
+map from range1 to range2
+*/
+function fit_bound(x, min1, max1, min2, max2){
+	return (max2 - min2) * (x-min1) / (max1 - min1) + min2;
 }
