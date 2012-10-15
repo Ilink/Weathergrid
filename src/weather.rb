@@ -9,6 +9,16 @@ require_relative 'util'
 			@params = params
 		end
 
+		# this is designed for the worldweatheronline feed, but probably is pretty general
+		# should parse out for things i care about like "cloudy" or "rain" or "clear"
+		def parse_desc(desc)
+			desc.downcase!
+			return "rain" if(desc.index "rain")
+			return "cloudy" if(desc.index "cloud")
+			return "clear" if(desc.index "clear")
+			return "snow" if(desc.index "snow")
+		end
+
 		def get_url
 			base = 'http://free.worldweatheronline.com/feed/weather.ashx'
 			params = {
@@ -34,7 +44,8 @@ require_relative 'util'
 					:desc => resp['data']['current_condition'][0]['weatherDesc'][0]['value'],
 					:cloud_cover => resp['data']['current_condition'][0]['cloudcover'],
 					:visibility => resp['data']['current_condition'][0]['visibility'],
-					:wind_speed => resp['data']['current_condition'][0]['windspeedMiles']
+					:wind_speed => resp['data']['current_condition'][0]['windspeedMiles'],
+					:desc => parse_desc(resp['data']['current_condition'][0]['weatherDesc'][0]['value'])
 				}
 			rescue Timeout::Error
 				"Errorrrrr timeout!"
