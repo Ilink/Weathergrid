@@ -21,11 +21,14 @@ class Ilink < Sinatra::Base
 		slim :weathergrid, :layout => :layout
 	end
 
-	get "/weather.json" do
+	get "/weather.json" do	
 		content_type 'json', :charset => 'utf-8'
-		weather = Weather.new(params)
-		(weather.get).to_json
-		# "hello"
+		if(params.nil? || !params.has_key?('coords'))
+			"needs me some params"
+		else
+			weather = Weather.new(params)
+			(weather.get).to_json
+		end
 	end
 
 end
