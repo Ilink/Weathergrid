@@ -6,15 +6,7 @@ $(document).ready(function(){
 		data.wind_speed = Number(data.wind_speed);
 		data.visibility = Number(data.visibility);
 	}
-
-	// function setup_colors(layout, weathercolor){
-	// 	layout.each(function($item, col, row, i){
-	// 		$item.css({
-	// 			'background-color': weathercolor.make(i, row, col, data)
-	// 		});
-	// 	});
-	// }
-
+	
 	get_coords(function(geo){
 		console.log(geo);
 
