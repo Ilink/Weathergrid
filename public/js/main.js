@@ -7,6 +7,14 @@ $(document).ready(function(){
 		data.visibility = Number(data.visibility);
 	}
 
+	// function setup_colors(layout, weathercolor){
+	// 	layout.each(function($item, col, row, i){
+	// 		$item.css({
+	// 			'background-color': weathercolor.make(i, row, col, data)
+	// 		});
+	// 	});
+	// }
+
 	get_coords(function(geo){
 		console.log(geo);
 
@@ -21,10 +29,19 @@ $(document).ready(function(){
 				var weathercolor = new Weathercolor();
 				var layout = new Layout($('.wrapper'), 5, {width: 60, height: 100});
 
-				layout.each(function($item, col, row, i){
-					$item.css({
-						'background-color': weathercolor.make(i, row, col, data)
+				function setup_colors(){
+					layout.each(function($item, col, row, i){
+						$item.css({
+							'background-color': weathercolor.make(i, row, col, data)
+						});
 					});
+				}
+
+				setup_colors(layout, weathercolor);
+
+				$(window).on('resize', function(){
+					layout.update();
+					setup_colors(layout);
 				});
 			}
 		});

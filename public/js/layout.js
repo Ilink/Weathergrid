@@ -3,8 +3,6 @@ note box = {
 	width: 100px,
 	height: 100px
 }
-
-I want this to fill the entire screen with boxes
 */
 function Layout($wrapper, margin, box_dim){
 
@@ -15,18 +13,6 @@ function Layout($wrapper, margin, box_dim){
 	}
 
 	function col_iter(callback){
-		var col = 0, row = 0, $current = $wrapper.find('.col').first();
-		console.log($current);
-		for(row = 0; row < cols; row++){
-			if(row > 0 && !(row % rows)){
-				$current = $current.next();
-				col++;
-			}
-			callback.call(this, $current, col, row);
-		}
-	}
-
-	function col_iter2(callback){
 		var $current = $wrapper.find('.col').first();
 		
 		for(var col = 0; col < cols; col++){
@@ -54,7 +40,7 @@ function Layout($wrapper, margin, box_dim){
 	function make_boxes(){
 		$wrapper.hide();
 		make_cols();
-		col_iter2(function($insert, col, row){
+		col_iter(function($insert, col, row){
 			$insert.append("<div class='grid_item'></div>");
 		});
 		$wrapper.show();
@@ -70,11 +56,17 @@ function Layout($wrapper, margin, box_dim){
 		});
 	}
 
+	/*
+	@update
+	This is designed to be an atomic operation. We must ensure the height and width
+	are taken at one single time. Otherwise, the window size might change out from
+	under us. 
+	*/
 	this.update = function(){
+		$wrapper.empty();
 		var $document = $(document);
 		cols = get_num_cols($document);
 		rows = get_num_rows($document);
-		console.log(rows, cols);
 		make_boxes();
 	}
 
