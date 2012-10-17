@@ -6,7 +6,7 @@ note box = {
 
 I want this to fill the entire screen with boxes
 */
-function Layout(weight, $wrapper, box){
+function Layout($wrapper, box){
 
 	// both of these are temp until i make the automatic layout
 	var rows = 5;
@@ -48,7 +48,6 @@ function Layout(weight, $wrapper, box){
 
 	// Constructor
 	make_boxes();
-	// color_boxes(weight);
 
 	// eventually this will work when the window is resized
 	this.update = function(){

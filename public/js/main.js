@@ -1,5 +1,12 @@
 $(document).ready(function(){
 
+	function prepare_data(data){
+		data.temp = Number(data.temp);
+		data.cloud_cover = Number(data.cloud_cover);
+		data.wind_speed = Number(data.wind_speed);
+		data.visibility = Number(data.visibility);
+	}
+
 	get_coords(function(geo){
 		console.log(geo);
 
@@ -10,13 +17,12 @@ $(document).ready(function(){
 			type: 'GET',
 			url: url,
 			success: function(data){
+				prepare_data(data);
 				var weathercolor = new Weathercolor();
-				var layout = new Layout({
-					h: data.temp,
-					s: 1,
-					v: data.temp
-				}, $('.wrapper'));
+				var layout = new Layout($('.wrapper'));
+
 				layout.each(function($item, col, row, i){
+					console.log(weathercolor.make(i, row, col, data))
 					$item.css({
 						'background-color': weathercolor.make(i, row, col, data)
 					});

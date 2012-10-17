@@ -40,7 +40,7 @@ function Mixer(){
 			return {
 				h: interp(bottom.h, top.h, opacity),
 				s: interp(bottom.s, top.s, opacity),
-				v: bottom.v
+				l: bottom.l
 			};
 		}
 	}

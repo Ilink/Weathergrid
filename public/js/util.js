@@ -1,7 +1,8 @@
 function make_hsl(h,s,l){
+	console.log(h,s,l);
 	if(typeof h.h !== 'undefined'){
-		var l = h.l || h.s || h.v;
-		return "hsl("+h.h+","+h.s+"%,"+l+"%)";
+		// var l = h.l || h.s || h.v;
+		return "hsl("+h.h+","+h.s+"%,"+h.l+"%)";
 	}
 	return "hsl("+h+","+s+"%,"+l+"%)";
 }
@@ -17,4 +18,10 @@ function get_coords(callback){
 	navigator.geolocation.getCurrentPosition(function(geo){
 		callback.call(this, geo);
 	});
+}
+
+function cap(x, min, max){
+	if(x < min) return min;
+	if(x > max) return max;
+	return x;
 }
