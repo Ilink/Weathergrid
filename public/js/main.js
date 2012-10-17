@@ -19,10 +19,9 @@ $(document).ready(function(){
 			success: function(data){
 				prepare_data(data);
 				var weathercolor = new Weathercolor();
-				var layout = new Layout($('.wrapper'));
+				var layout = new Layout($('.wrapper'), 5, {width: 60, height: 100});
 
 				layout.each(function($item, col, row, i){
-					console.log(weathercolor.make(i, row, col, data))
 					$item.css({
 						'background-color': weathercolor.make(i, row, col, data)
 					});

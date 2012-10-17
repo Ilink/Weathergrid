@@ -1,7 +1,5 @@
 function make_hsl(h,s,l){
-	console.log(h,s,l);
 	if(typeof h.h !== 'undefined'){
-		// var l = h.l || h.s || h.v;
 		return "hsl("+h.h+","+h.s+"%,"+h.l+"%)";
 	}
 	return "hsl("+h+","+s+"%,"+l+"%)";
