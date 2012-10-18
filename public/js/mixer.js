@@ -28,7 +28,7 @@ function Mixer(){
 	function premultiply_opacity(hsl, opacity){
 		hsl.h *= opacity;
 		hsl.s *= opacity;
-		hsl.v *= opacity;
+		hsl.l *= opacity;
 	}
 
 	var modes = {

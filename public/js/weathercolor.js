@@ -47,7 +47,7 @@ function Weathercolor(){
 		return {
 			h: base_h + increment, // makes a nice subtle gradient
 			s: Math.max(temp + row * 2, 90),
-			l: Math.max(temp - (row/20), 10)
+			l: Math.max(temp - (row/10), 10)
 			// s: temp,
 			// l: temp
 		};
@@ -55,8 +55,9 @@ function Weathercolor(){
 
 	function mix_cloud(base, cloud_percent){
 		var grey = shade.make_grey_shade(base);
-		// console.log('grey', grey);
-		return mixer.mix('color', grey, base, cloud_percent);
+		console.log('grey', grey);
+		// oh god that looks bad
+		return mixer.mix('color', grey, base, 100);
 	}
 
 	this.make = function(i, row, col, weather_data){
