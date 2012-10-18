@@ -1,16 +1,14 @@
 /*
-@blend color
-Top = top layer
-bottom = bottom layer
-Think about it like Photoshop
+Mixer
+Lets you mix colors, in ways similar to Photoshop and other image compositing tools.
+I'm sort of implementing as I go, so not everyting is here.
 
-V comes from bottom layer
-takes H and S from top layer
+Bottom = the original layer
+Top = the layer you want to blend
 
-Opactiy is the amount of top mixed with bottom.
-
-The opactiy is not working, obviously.
-It should be partway between the top value and the bottom value.
+Color:
+	Blends the hue and saturation from the bottom and the top.
+	Lightness is taken from the bottom.
 */
 
 function Mixer(){
@@ -37,6 +35,7 @@ function Mixer(){
 
 			premultiply_opacity(top, opacity);
 
+			// Only mix to a certain opacity threshold
 			return {
 				h: interp(bottom.h, top.h, opacity),
 				s: interp(bottom.s, top.s, opacity),
@@ -46,6 +45,7 @@ function Mixer(){
 	}
 
 	this.mix = function(mode, top, bottom, opacity){
+		if(opacity > 1) throw "Opacity should a percent value from 0 to 1";
 		if(typeof opacity === 'undefined') opacity = 1;
 		if(typeof modes[mode] === 'undefined'){
 			throw "Mode '" +mode+ "' undefined";

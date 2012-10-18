@@ -11,7 +11,7 @@ function Shade(){
 	this.make_grey_shade = function(base){
 		return {
 			h: base.h,
-			s: Math.log(base.s/100),
+			s: Math.log(base.s/5),
 			l: base.l / 10
 		}
 	};
