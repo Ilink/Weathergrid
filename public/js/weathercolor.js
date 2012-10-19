@@ -58,7 +58,7 @@ function Weathercolor(){
 	function mix_cloud(base, cloud_percent){
 		var grey = shade.make_grey_shade(base);
 		console.log('grey:', grey, base);
-		var cloud_percent = 0.6;
+		// var cloud_percent = 0.6;
 		return mixer.mix('color', grey, base, cloud_percent);
 	}
 

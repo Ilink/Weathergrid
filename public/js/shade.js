@@ -10,8 +10,8 @@ function Shade(){
 
 	this.make_grey_shade = function(base){
 		return {
-			h: base.h,
-			s: Math.log(base.s/5),
+			h: base.h-50,
+			s: Math.pow(base.s, 0.7),
 			l: base.l / 10
 		}
 	};

@@ -78,9 +78,9 @@ class Weather
 			{
 				:temp => resp['data']['current_condition'][0]['temp_F'],
 				:desc => resp['data']['current_condition'][0]['weatherDesc'][0]['value'],
-				:cloud_cover => resp['data']['current_condition'][0]['cloudcover'],
-				:visibility => resp['data']['current_condition'][0]['visibility'],
-				:wind_speed => resp['data']['current_condition'][0]['windspeedMiles'],
+				:cloud_cover => resp['data']['current_condition'][0]['cloudcover'].to_f / 100,
+				:visibility => resp['data']['current_condition'][0]['visibility'].to_i,
+				:wind_speed => resp['data']['current_condition'][0]['windspeedMiles'].to_i,
 				:desc => parse_desc(resp['data']['current_condition'][0]['weatherDesc'][0]['value']),
 				:desc_orig => resp['data']['current_condition'][0]['weatherDesc'][0]['value'],
 				:season => get_season(@coords[:lat])
