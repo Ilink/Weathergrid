@@ -23,3 +23,11 @@ function cap(x, min, max){
 	if(x > max) return max;
 	return x;
 }
+
+function join_o(obj, char){
+	var str = '';
+	$.each(obj, function(k, v){
+		str += v + char;
+	});
+	return str.slice(0, str.length-1);
+}

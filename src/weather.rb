@@ -74,8 +74,7 @@ class Weather
 
 		resp = JSON.parse(resp)
 
-		begin
-			{
+		begin {
 				:temp => resp['data']['current_condition'][0]['temp_F'],
 				:desc => resp['data']['current_condition'][0]['weatherDesc'][0]['value'],
 				:cloud_cover => resp['data']['current_condition'][0]['cloudcover'].to_f / 100,
@@ -86,7 +85,7 @@ class Weather
 				:season => get_season(@coords[:lat])
 			}
 		rescue NoMethodError
-			{:error => 'No weather data for that lng and lat. Or something else went wrong.'}
+			{ :error => 'No weather data for that lng and lat. Or something else went wrong.' }
 		end
 	end
 
