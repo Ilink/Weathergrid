@@ -20,10 +20,13 @@ function Weathercolor(){
 	Make the base color, from the season and temperature
 	Temperature controls lightness and the saturation.
 	The season controls the hue. This gives us the ability to define season-specific colorsets.
+
+	This setup looks really bad for lower temperatures. I need to mix in other colors or something
+	to make them better.
 	*/
 	function make_base(i, row, col, season, temp){
 		var increment = gradient_increment(row);
-		// temp = 80;
+		temp = 80;
 
 		var base_h;
 		season = 'fall'
@@ -60,11 +63,19 @@ function Weathercolor(){
 		return mixer.mix('color', grey, base, cloud_percent);
 	}
 
+	function mix_experiment(base){
+		var exp = shade.make_blue_shade(base, 0.5);
+		console.log('base', base, 'exp', exp);
+		return mixer.mix('normal', exp, base, 0.8);
+	}
+
 	this.make = function(i, row, col, weather_data){
 		base = make_base(i, row, col, weather_data.season, weather_data.temp);
-		// console.log('base', base);
+		console.log('base', base);
 		final_color = base;
 		final_color = mix_cloud(base, weather_data.cloud_cover);
+		final_color = mix_experiment(base);
+
 		return make_hsl(final_color);
 	}
 

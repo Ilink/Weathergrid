@@ -24,10 +24,12 @@ function Layout($wrapper, margin, box_dim){
 	}
 
 	function get_num_cols($container){
+		return 1;
 		return Math.floor($container.width() / (box_dim.width + margin*2));
 	}
 
 	function get_num_rows($container){
+		return 1;
 		return Math.floor($container.height() / (box_dim.height + margin*2));
 	}
 

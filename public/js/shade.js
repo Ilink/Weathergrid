@@ -16,3 +16,20 @@ function Shade(){
 		}
 	};
 }
+
+Shade.prototype.make_grey_shade = function(base){
+	return {
+		h: base.h-50,
+		s: Math.pow(base.s, 0.7),
+		l: base.l / 10
+	}
+};
+
+Shade.prototype.make_blue_shade = function(base, a){
+	return {
+		h: 209,
+		s: 82,
+		l: 69,
+		a: a
+	}
+}

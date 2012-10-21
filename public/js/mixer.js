@@ -23,10 +23,10 @@ function Mixer(){
 		return result;
 	}
 
-	function premultiply_opacity(hsl, opacity){
-		hsl.h *= opacity;
-		hsl.s *= opacity;
-		hsl.l *= opacity;
+	function premultiply_opacity(hsl){
+		hsl.h *= hsl.a;
+		hsl.s *= hsl.a;
+		hsl.l *= hsl.a;
 	}
 
 	var modes = {
@@ -35,12 +35,46 @@ function Mixer(){
 
 			premultiply_opacity(top, opacity);
 
-			// Only mix to a certain opacity threshold
 			return {
 				h: interp(bottom.h, top.h, opacity),
 				s: interp(bottom.s, top.s, opacity),
 				l: bottom.l
 			};
+		},
+		'normal': function(top, bottom, opacity){
+			var blended = {};
+			premultiply_opacity(top, opacity);
+			top = hsl_to_rgb(top);
+			console.log('top after rgb cojnversion', top);
+			bottom = hsl_to_rgb(bottom);
+			console.log(bottom,'bot after rgb cojnversion', bottom);
+
+			var mixed_rgb = {
+				r: interp(bottom.r, top.r, opacity),
+				g: interp(bottom.g, top.g, opacity),
+				b: interp(bottom.b, top.b, opacity),
+			};
+
+			var ret = rgb_to_hsl(mixed_rgb);
+			console.log('top', top, 'bottom', bottom, 'mixed rgb', mixed_rgb, 'mixed hsl', mixed_rgb);
+			return rgb_to_hsl(mixed_rgb);
+
+			// return {
+			// 	h: interp(bottom.h, top.h, opacity),
+			// 	s: interp(bottom.s, top.s, opacity),
+			// 	l: interp(bottom.l, top.l, opacity)
+			// }
+		},
+		'test': function(top, bottom, opacity){
+			var blended = {};
+			premultiply_opacity(top);
+
+			return {
+				h: interp(bottom.h, top.h, top.a),
+				s: interp(bottom.s, top.s, top.a),
+				// l: interp(bottom.l, top.l, opacity)
+				l: bottom.l
+			}
 		}
 	}
 

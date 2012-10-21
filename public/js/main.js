@@ -7,6 +7,10 @@ $(document).ready(function(){
 		data.visibility = Number(data.visibility);
 	}
 	
+	var hsl = {h: 73, s: .45, l: .79};
+	var rgb = hsl_to_rgb(hsl);
+	console.log(rgb);
+
 	get_coords(function(geo){
 		console.log(geo);
 
