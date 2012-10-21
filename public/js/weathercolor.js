@@ -23,12 +23,13 @@ function Weathercolor(){
 	*/
 	function make_base(i, row, col, season, temp){
 		var increment = gradient_increment(row);
+		// temp = 80;
 
 		var base_h;
 		season = 'fall'
 		switch(season) {
 			case 'fall':
-				base_h = 0;
+				base_h = 5;
 				increment /= 2;
 				break;
 			case 'winter':
@@ -42,16 +43,14 @@ function Weathercolor(){
 				break;
 		}
 
-		var fitted = fit_bound(temp, 0, 110, 0, 70);
+		var fitted_temp = fit_bound(temp, 0, 110, 0, 70);
 
 		// If we go above 360, I think it does weird things when mixing colors later
 		if(base_h + increment > 360) base_h = 0;
 		return {
 			h: base_h + increment, // makes a nice subtle gradient
-			s: Math.max(temp + row * 2, 90),
-			l: cap(temp - (row/10), 0, 100)
-			// s: temp,
-			// l: temp
+			s: Math.max(fitted_temp + row * 2, 50),
+			l: cap(fitted_temp - (row/10), 0, 100)
 		};
 	}
 
