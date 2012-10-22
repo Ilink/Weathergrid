@@ -51,8 +51,8 @@ function Weathercolor(){
 		// If we go above 360, I think it does weird things when mixing colors later
 		if(base_h + increment > 360) base_h = 0;
 		return {
-			// h: base_h + increment/2, // makes a nice subtle gradient
-			h: base_h,
+			h: base_h + increment/2, // makes a nice subtle gradient
+			// h: base_h,
 			// s: Math.max(fitted_temp + row * 2, 50),
 			// l: cap(fitted_temp - (row/10), 0, 100)
 			s: 75,
@@ -82,7 +82,7 @@ function Weathercolor(){
 	this.make = function(i, row, col, weather_data){
 		base = make_base(i, row, col, weather_data.season, weather_data.temp);
 		final_color = base;
-		final_color = mix_blue(base, 0.75);
+		final_color = mix_blue(base, 0.25);
 
 		// final_color = mix_cloud(base, 0.5);
 		// final_color = mix_experiment(base);

@@ -29,6 +29,15 @@ function Mixer(){
 		hsl.l *= hsl.a;
 	}
 
+	// easier to calculate with rgb than hsl
+	function get_compliment(color){
+		return {
+			r: 255 - color.r,
+			g: 255 - color.g,
+			b: 255 - color.b
+		}
+	}
+
 	var modes = {
 		'color': function(top, bottom, opacity){
 			var blended = {};
