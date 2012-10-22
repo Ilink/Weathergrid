@@ -26,13 +26,13 @@ function Weathercolor(){
 	*/
 	function make_base(i, row, col, season, temp){
 		var increment = gradient_increment(row);
-		temp = 80;
+		// temp = 80;
 
 		var base_h;
 		season = 'fall'
 		switch(season) {
 			case 'fall':
-				base_h = 5;
+				base_h = 18;
 				increment /= 2;
 				break;
 			case 'winter':
@@ -51,30 +51,42 @@ function Weathercolor(){
 		// If we go above 360, I think it does weird things when mixing colors later
 		if(base_h + increment > 360) base_h = 0;
 		return {
-			h: base_h + increment, // makes a nice subtle gradient
-			s: Math.max(fitted_temp + row * 2, 50),
-			l: cap(fitted_temp - (row/10), 0, 100)
+			// h: base_h + increment/2, // makes a nice subtle gradient
+			h: base_h,
+			// s: Math.max(fitted_temp + row * 2, 50),
+			// l: cap(fitted_temp - (row/10), 0, 100)
+			s: 75,
+			l: 60
 		};
 	}
 
 	function mix_cloud(base, cloud_percent){
 		var grey = shade.make_grey_shade(base);
 		// var cloud_percent = 0.6;
-		return mixer.mix('color', grey, base, cloud_percent);
+		console.log('grey mix', grey);
+		return mixer.mix('normal', grey, base, cloud_percent);
 	}
 
 	function mix_experiment(base){
-		var exp = shade.make_blue_shade(base, 0.5);
-		console.log('base', base, 'exp', exp);
-		return mixer.mix('normal', exp, base, 0.8);
+		var exp = shade.make_grey_shade(base, 1);
+		console.log('grey', exp);
+		return mixer.mix('normal', exp, base, 1);
+	}
+
+	function mix_blue(base, percent){
+		var blue = shade.make_blue(base, 1);
+		console.log('blue', blue);
+		return mixer.mix('normal', blue, base, percent);
 	}
 
 	this.make = function(i, row, col, weather_data){
 		base = make_base(i, row, col, weather_data.season, weather_data.temp);
-		console.log('base', base);
 		final_color = base;
-		final_color = mix_cloud(base, weather_data.cloud_cover);
-		final_color = mix_experiment(base);
+		final_color = mix_blue(base, 0.75);
+
+		// final_color = mix_cloud(base, 0.5);
+		// final_color = mix_experiment(base);
+
 
 		return make_hsl(final_color);
 	}

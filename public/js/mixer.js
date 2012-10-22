@@ -41,13 +41,13 @@ function Mixer(){
 				l: bottom.l
 			};
 		},
+		// Straight interpolation
 		'normal': function(top, bottom, opacity){
+			console.log('mixing:', top, 'and bottom:', bottom)
 			var blended = {};
 			premultiply_opacity(top, opacity);
 			top = hsl_to_rgb(top);
-			console.log('top after rgb cojnversion', top);
 			bottom = hsl_to_rgb(bottom);
-			console.log(bottom,'bot after rgb cojnversion', bottom);
 
 			var mixed_rgb = {
 				r: interp(bottom.r, top.r, opacity),
@@ -56,25 +56,7 @@ function Mixer(){
 			};
 
 			var ret = rgb_to_hsl(mixed_rgb);
-			console.log('top', top, 'bottom', bottom, 'mixed rgb', mixed_rgb, 'mixed hsl', mixed_rgb);
 			return rgb_to_hsl(mixed_rgb);
-
-			// return {
-			// 	h: interp(bottom.h, top.h, opacity),
-			// 	s: interp(bottom.s, top.s, opacity),
-			// 	l: interp(bottom.l, top.l, opacity)
-			// }
-		},
-		'test': function(top, bottom, opacity){
-			var blended = {};
-			premultiply_opacity(top);
-
-			return {
-				h: interp(bottom.h, top.h, top.a),
-				s: interp(bottom.s, top.s, top.a),
-				// l: interp(bottom.l, top.l, opacity)
-				l: bottom.l
-			}
 		}
 	}
 

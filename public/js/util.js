@@ -85,7 +85,6 @@ function hsl_to_rgb(hsl){
 	p = hsl.l * (1 - hsl.s);
 	q = hsl.l * (1 - hsl.s * h_int);
 	t = hsl.l * (1 - hsl.s * (1 - h_int));
-	console.log(p,q,t, hsl);
 	switch(h_round) {
 		case 0:
 			rgb.r = hsl.l;
@@ -122,4 +121,12 @@ function hsl_to_rgb(hsl){
 	rgb.g *= 256;
 	rgb.b *= 256;
 	return rgb;
+}
+
+function cycle(x, increment, min, max){
+	if(x - increment < min){
+		return max - increment;
+	} else if(x + increment > max){
+		return min + increment;
+	}
 }

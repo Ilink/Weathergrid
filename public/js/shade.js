@@ -7,21 +7,15 @@ to exist.
 */
 
 function Shade(){
-
-	this.make_grey_shade = function(base){
-		return {
-			h: base.h-50,
-			s: Math.pow(base.s, 0.7),
-			l: base.l / 10
-		}
-	};
 }
 
-Shade.prototype.make_grey_shade = function(base){
+Shade.prototype.make_grey_shade = function(base, a){
 	return {
-		h: base.h-50,
-		s: Math.pow(base.s, 0.7),
-		l: base.l / 10
+		h: base.h,
+		// s: Math.pow(base.s, 0.7),
+		s: base.s / 2,
+		l: base.l / 2,
+		a: a || 1
 	}
 };
 
@@ -30,6 +24,15 @@ Shade.prototype.make_blue_shade = function(base, a){
 		h: 209,
 		s: 82,
 		l: 69,
-		a: a
+		a: a || 1
 	}
-}
+};
+
+Shade.prototype.make_blue = function(base, a){
+	return {
+		h: 203,
+		s: 78,
+		l: 60,
+		a: a || 1
+	}
+};
