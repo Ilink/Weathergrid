@@ -24,18 +24,17 @@ $(document).ready(function(){
 		// 	});
 		// }
 
-		// $(document).one('weather', function(e, geo){
-		// 	prepare_data(data);
-		// 	var weathercolor = new Weathercolor();
-		// 	var layout = new Layout($('.wrapper'), 5, {width: 60, height: 100});
+		// Initially, we must set up both the initial data and the resize event
+		$(document).one('weather', function(e, weather_data){
+			colors.update(geo);
+			$(window).on('resize', function(){
+				colors.update_layout();
+			});
+			$(document).on('weather', function(e, weather_data){
+				colors.update(geo);
+			});
+		});
 
-		// 	setup_colors(layout, weathercolor);
-
-		// 	$(window).on('resize', function(){
-		// 		layout.update();
-		// 		setup_colors(layout);
-		// 	});
-		// });
 
 		//todo: use model instead
 		$.ajax({
