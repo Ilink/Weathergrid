@@ -13,16 +13,10 @@ $(document).ready(function(){
 		var coords = geo.coords.latitude + "," + geo.coords.longitude;
 		var url = "/weather.json?coords="+coords;
 
+		// Uncomment me once model is ready to go!
+		//////////////////
 		// var model = new Model(coords);
 		// model.load();
-
-		// function setup_colors(layout, weathercolor){
-		// 	layout.each(function($item, col, row, i){
-		// 		$item.css({
-		// 			'background-color': weathercolor.make(i, row, col, data)
-		// 		});
-		// 	});
-		// }
 
 		// Initially, we must set up both the initial data and the resize event
 		$(document).one('weather', function(e, weather_data){
@@ -36,7 +30,7 @@ $(document).ready(function(){
 		});
 
 
-		//todo: use model instead
+		// todo: use model instead
 		$.ajax({
 			type: 'GET',
 			url: url,
