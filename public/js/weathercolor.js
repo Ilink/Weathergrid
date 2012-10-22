@@ -46,7 +46,7 @@ function Weathercolor(){
 				break;
 		}
 
-		var fitted_temp = fit_bound(temp, 0, 110, 0, 70);
+		var fitted_temp = fit_bound(temp, 0, 110, 0, 1);
 
 		// If we go above 360, I think it does weird things when mixing colors later
 		if(base_h + increment > 360) base_h = 0;
@@ -55,16 +55,17 @@ function Weathercolor(){
 			// h: base_h,
 			// s: Math.max(fitted_temp + row * 2, 50),
 			// l: cap(fitted_temp - (row/10), 0, 100)
-			s: 75,
-			l: 60
+			s: 0.75,
+			l: 0.60,
+			a: 1
 		};
 	}
 
-	function mix_cloud(base, cloud_percent){
+	function mix_cloud(base, percent){
 		var grey = shade.make_grey_shade(base);
-		// var cloud_percent = 0.6;
+		// var percent = 0.6;
 		console.log('grey mix', grey);
-		return mixer.mix('normal', grey, base, cloud_percent);
+		return mixer.mix('normal', grey, base, percent);
 	}
 
 	function mix_experiment(base){
@@ -83,21 +84,25 @@ function Weathercolor(){
 		console.log('base',base);
 		var compliment = get_compliment(hsl_to_rgb(base));
 		compliment = rgb_to_hsl(compliment);
-		var blue = shade.make_blue(base, 1);
+		console.log(compliment);
 
 		return mixer.mix('normal', compliment, base, percent);
 	}
 
 	this.make = function(i, row, col, weather_data){
+		increment = gradient_increment(row) / 2;
 		base = make_base(i, row, col, weather_data.season, weather_data.temp);
 		final_color = base;
-		// final_color = mix_blue(base, 0.25);
-		final_color = mix_compliment(base, 1);
+		var fitted_temp = fit_bound(weather_data.temp, 40, 100, 0, 1);
 
-		// final_color = mix_cloud(base, 0.5);
+		// final_color = mix_compliment(base, .2);
+		final_color = mix_blue(final_color, 0.7);
+		final_color = mix_cloud(final_color, .70);
+
+
+		final_color.h += increment;
+
 		// final_color = mix_experiment(base);
-
-
 		return make_hsl(final_color);
 	}
 

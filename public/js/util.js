@@ -1,8 +1,8 @@
 function make_hsl(h,s,l){
 	if(typeof h.h !== 'undefined'){
-		return "hsl("+h.h+","+h.s+"%,"+h.l+"%)";
+		return "hsl("+h.h+","+h.s*100+"%,"+h.l*100+"%)";
 	}
-	return "hsl("+h+","+s+"%,"+l+"%)";
+	return "hsl("+h+","+s*100+"%,"+l*100+"%)";
 }
 
 /*
@@ -15,6 +15,7 @@ function fit_bound(x, min1, max1, min2, max2){
 function get_coords(callback){
 	navigator.geolocation.getCurrentPosition(function(geo){
 		callback.call(this, geo);
+		$(document).trigger('coords', geo);
 	});
 }
 
@@ -59,21 +60,13 @@ function rgb_to_hsl(rgb){
 	if(hsl.h < 0)
 		hsl.h += 360;
 
-	// CSS HSL values use 0-100% for saturation and lightness
-	// This algorithm expects 0-1, so we multiply by 100.
-	hsl.s *= 100;
-	hsl.l *= 100;
-
+	hsl.a = rgb.a;
 	return hsl;
 }
 
 // http://www.cs.rit.edu/~ncs/color/t_convert.html
 // Converted to Javascript, with a few other changes
 function hsl_to_rgb(hsl){
-	// CSS HSL values use 0-100% for saturation and lightness
-	// This algorithm expects 0-1, so we divide by 100.
-	hsl.s /= 100;
-	hsl.l /= 100;
 	var h_round, h_int, p, q, t, rgb = {};
 	if(hsl.s == 0) {
 		rgb.r = rgb.g = rgb.b = hsl.l;
@@ -120,6 +113,7 @@ function hsl_to_rgb(hsl){
 	rgb.r *= 256;
 	rgb.g *= 256;
 	rgb.b *= 256;
+	rgb.a = hsl.a
 	return rgb;
 }
 
@@ -132,10 +126,12 @@ function cycle(x, increment, min, max){
 }
 
 // easier to calculate with RGB than HSL
+// note that by definition, alpha is unaffected
 function get_compliment(color){
 	return {
 		r: 255 - color.r,
 		g: 255 - color.g,
-		b: 255 - color.b
+		b: 255 - color.b,
+		a: color.a
 	}
 }

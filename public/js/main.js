@@ -13,6 +13,31 @@ $(document).ready(function(){
 		var coords = geo.coords.latitude + "," + geo.coords.longitude;
 		var url = "/weather.json?coords="+coords;
 
+		// var model = new Model(coords);
+		// model.load();
+
+		// function setup_colors(layout, weathercolor){
+		// 	layout.each(function($item, col, row, i){
+		// 		$item.css({
+		// 			'background-color': weathercolor.make(i, row, col, data)
+		// 		});
+		// 	});
+		// }
+
+		// $(document).one('weather', function(e, geo){
+		// 	prepare_data(data);
+		// 	var weathercolor = new Weathercolor();
+		// 	var layout = new Layout($('.wrapper'), 5, {width: 60, height: 100});
+
+		// 	setup_colors(layout, weathercolor);
+
+		// 	$(window).on('resize', function(){
+		// 		layout.update();
+		// 		setup_colors(layout);
+		// 	});
+		// });
+
+		//todo: use model instead
 		$.ajax({
 			type: 'GET',
 			url: url,
