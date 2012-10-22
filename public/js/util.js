@@ -130,3 +130,12 @@ function cycle(x, increment, min, max){
 		return min + increment;
 	}
 }
+
+// easier to calculate with RGB than HSL
+function get_compliment(color){
+	return {
+		r: 255 - color.r,
+		g: 255 - color.g,
+		b: 255 - color.b
+	}
+}
