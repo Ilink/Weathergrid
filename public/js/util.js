@@ -135,3 +135,7 @@ function get_compliment(color){
 		a: color.a
 	}
 }
+
+function parse_coords(coords){
+	return coords = coords.latitude + "," + coords.longitude;
+}

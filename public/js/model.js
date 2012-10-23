@@ -6,8 +6,8 @@
 }
 */
 
-var Model = function(coords){
-	var parsed_coords = join(coords, ',');
+function Model(coords){
+	var parsed_coords = parse_coords(coords);
 	var url = "/weather.json?coords="+parsed_coords;
 
 	this.load = function(){
