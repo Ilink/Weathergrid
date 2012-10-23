@@ -22,8 +22,8 @@ Shade.prototype.make_grey_shade = function(base, a){
 Shade.prototype.make_blue_shade = function(base, a){
 	return {
 		h: 209,
-		s: 82,
-		l: 69,
+		s: 0.82,
+		l: 0.69,
 		a: a || 1
 	}
 };
@@ -31,8 +31,8 @@ Shade.prototype.make_blue_shade = function(base, a){
 Shade.prototype.make_blue = function(base, a){
 	return {
 		h: 203,
-		s: 78,
-		l: 60,
+		s: 0.78,
+		l: 0.60,
 		a: a || 1
 	}
 };

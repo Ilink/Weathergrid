@@ -13,6 +13,24 @@ $(document).ready(function(){
 		var coords = geo.coords.latitude + "," + geo.coords.longitude;
 		var url = "/weather.json?coords="+coords;
 
+		// Uncomment me once model is ready to go!
+		//////////////////
+		// var model = new Model(coords);
+		// model.load();
+
+		// Initially, we must set up both the initial data and the resize event
+		$(document).one('weather', function(e, weather_data){
+			colors.update(geo);
+			$(window).on('resize', function(){
+				colors.update_layout();
+			});
+			$(document).on('weather', function(e, weather_data){
+				colors.update(geo);
+			});
+		});
+
+
+		// todo: use model instead
 		$.ajax({
 			type: 'GET',
 			url: url,
