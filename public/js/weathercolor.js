@@ -82,10 +82,10 @@ function Weathercolor(){
 	function mix_compliment(base, percent){
 		console.log('base',base);
 		var compliment = get_compliment(hsl_to_rgb(base));
+		console.log('compliment', compliment);
 		compliment = rgb_to_hsl(compliment);
-		var blue = shade.make_blue(base, 1);
-
-		return mixer.mix('normal', compliment, base, percent);
+		// var blue = shade.make_blue(base, 1);
+		return mixer.mix('normal', blue, base, percent);
 	}
 
 	this.make = function(i, row, col, weather_data){
