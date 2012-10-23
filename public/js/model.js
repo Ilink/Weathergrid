@@ -14,8 +14,8 @@ var Model = function(coords){
 		$.ajax({
 			type: 'GET',
 			url: url,
-			success: function(){
-				
+			success: function(weather_data){
+				$(document).trigger('weather', weather_data);
 			}
 		});
 	}
