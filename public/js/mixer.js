@@ -86,8 +86,8 @@ function Mixer(){
 		},
 		// Straight interpolation
 		'normal': function(top, bottom, opacity){
-			console.log('mixing with opacity: ', opacity);
-			console.log('mixing:', top, 'and bottom:', bottom)
+			// console.log('mixing with opacity: ', opacity);
+			// console.log('mixing:', top, 'and bottom:', bottom)
 			premultiply_opacity(top);
 			top = hsl_to_rgb(top);
 			bottom = hsl_to_rgb(bottom);
@@ -100,7 +100,7 @@ function Mixer(){
 			};
 
 			var mixed_hsl = rgb_to_hsl(mixed_rgb);
-			console.log(mixed_hsl);
+			// console.log(mixed_hsl);
 			return demultiply_opacity(mixed_hsl, top.a);
 		},
 		'overlay': function(top, bottom, opacity){
@@ -108,22 +108,28 @@ function Mixer(){
 			bottom = hsl_to_rgb(bottom);
 
 			function mix(a, b){
-				return (b < 128) ? (2 * a * b / 255):(255 - 2 * (255 - a) * (255 - b) / 255));
+				return (b < 128) ? (2 * a * b / 255):(255 - 2 * (255 - a) * (255 - b) / 255);
 			}
 
 			// Compute the mixed layer, igoring opacity
 			var mixed_rgb = {
-				r: interp(bottom.r, top.r, opacity)
+				r: mix(bottom.r, top.r),
+				g: mix(bottom.g, top.g),
+				b: mix(bottom.b, top.b)
 			}
 
 			// Interpolate result with original base layer
-			mixed_rgb.r = interp(bottom.r, top.r, opacity); 
-			
+			mixed_rgb.r = interp(bottom.r, mixed_rgb.r, opacity); 
+			mixed_rgb.g = interp(bottom.g, mixed_rgb.g, opacity);
+			mixed_rgb.b = interp(bottom.b, mixed_rgb.b, opacity);
+
+			// todo: demultiply alpha here
+			return rgb_to_hsl(mixed_rgb);
 		}
 	}
 
 	this.mix = function(mode, top, bottom, opacity){
-		console.log(mode, top, bottom, opacity);
+		// console.log(mode, top, bottom, opacity);
 		if(opacity > 1) throw "Opacity should a percent value from 0 to 1";
 		if(typeof opacity === 'undefined') opacity = 1;
 		if(typeof modes[mode] === 'undefined'){

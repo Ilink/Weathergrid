@@ -29,7 +29,7 @@ function Weathercolor(){
 		// temp = 80;
 
 		var base_h;
-		season = 'spring'
+		season = 'fall'
 		switch(season) {
 			case 'fall':
 				base_h = 18;
@@ -81,17 +81,19 @@ function Weathercolor(){
 	}
 
 	function mix_compliment(base, percent){
-		console.log('base',base);
 		var compliment = get_compliment(hsl_to_rgb(base));
-		console.log('compliment', compliment);
 		compliment = rgb_to_hsl(compliment);
 
 		// var blue = shade.make_blue(base, 1);
 		// return mixer.mix('normal', blue, base, percent);
-
-		console.log(compliment);
+		// console.log(compliment);
 
 		return mixer.mix('normal', compliment, base, percent);
+	}
+
+	function overlay_test(base, percent){
+		var blue = shade.make_blue(base, 1);
+		return mixer.mix('overlay', blue, base, percent);
 	}
 
 	this.make = function(i, row, col, weather_data){
@@ -100,12 +102,12 @@ function Weathercolor(){
 		final_color = base;
 		var fitted_temp = fit_bound(weather_data.temp, 40, 100, 0, 1);
 
-		final_color = mix_compliment(base, .75);
+		// final_color = mix_compliment(base, .75);
+		final_color = overlay_test(base, 0.35);
 		// final_color = mix_blue(final_color, 0.7);
 		// final_color = mix_cloud(final_color, .70);
 
-
-		final_color.h += increment;
+		// final_color.h += increment;
 
 		// final_color = mix_experiment(base);
 		return make_hsl(final_color);
