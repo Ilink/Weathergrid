@@ -29,7 +29,7 @@ function Weathercolor(){
 		// temp = 80;
 
 		var base_h;
-		season = 'fall'
+		season = 'spring'
 		switch(season) {
 			case 'fall':
 				base_h = 18;
@@ -100,9 +100,9 @@ function Weathercolor(){
 		final_color = base;
 		var fitted_temp = fit_bound(weather_data.temp, 40, 100, 0, 1);
 
-		// final_color = mix_compliment(base, .2);
-		final_color = mix_blue(final_color, 0.7);
-		final_color = mix_cloud(final_color, .70);
+		final_color = mix_compliment(base, .75);
+		// final_color = mix_blue(final_color, 0.7);
+		// final_color = mix_cloud(final_color, .70);
 
 
 		final_color.h += increment;

@@ -3,6 +3,7 @@ require_relative 'util'
 
 class Weather
 
+	# API key could be a constructor parameter
 	def initialize(params = Hash.new)
 		@api_key = '741f676c94234130120910'
 		@params = params
@@ -10,7 +11,7 @@ class Weather
 	end
 
 	# this is designed for the worldweatheronline feed, but probably is pretty general
-	# should parse out for things i care about like "cloudy" or "rain" or "clear"
+	# should parse out for things we care about like "cloudy" or "rain" or "clear"
 	def parse_desc(desc)
 		desc.downcase!
 		return "rain" if(desc.index "rain")
@@ -75,15 +76,15 @@ class Weather
 		resp = JSON.parse(resp)
 
 		begin {
-				:temp => resp['data']['current_condition'][0]['temp_F'].to_f,
-				:desc => resp['data']['current_condition'][0]['weatherDesc'][0]['value'],
-				:cloud_cover => resp['data']['current_condition'][0]['cloudcover'].to_f / 100,
-				:visibility => resp['data']['current_condition'][0]['visibility'].to_i,
-				:wind_speed => resp['data']['current_condition'][0]['windspeedMiles'].to_i,
-				:desc => parse_desc(resp['data']['current_condition'][0]['weatherDesc'][0]['value']),
-				:desc_orig => resp['data']['current_condition'][0]['weatherDesc'][0]['value'],
-				:season => get_season(@coords[:lat])
-			}
+			:temp => resp['data']['current_condition'][0]['temp_F'].to_f,
+			:desc => resp['data']['current_condition'][0]['weatherDesc'][0]['value'],
+			:cloud_cover => resp['data']['current_condition'][0]['cloudcover'].to_f / 100,
+			:visibility => resp['data']['current_condition'][0]['visibility'].to_i,
+			:wind_speed => resp['data']['current_condition'][0]['windspeedMiles'].to_i,
+			:desc => parse_desc(resp['data']['current_condition'][0]['weatherDesc'][0]['value']),
+			:desc_orig => resp['data']['current_condition'][0]['weatherDesc'][0]['value'],
+			:season => get_season(@coords[:lat])
+		}
 		rescue NoMethodError
 			{ :error => 'No weather data for that lng and lat. Or something else went wrong.' }
 		end

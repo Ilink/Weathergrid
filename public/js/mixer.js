@@ -12,6 +12,20 @@ Color:
 */
 
 function Mixer(){
+
+	/*
+	Right now, this doesn't calculate alpha for the base color
+	see http://stackoverflow.com/questions/7438263/alpha-compositing-algorithm-blend-modes/11163848#comment17571004_11163848 
+	for how it should be done
+	*/
+
+	/*
+	Apparently, this isn't really the correct way of doing this.
+	Photoshop does it like this:
+		O * top + (1 - O) * bottom
+
+	I must experiment to see which looks better for my purposes.
+	*/
 	function interp(a, b, percent){
 		var diff = Math.abs(a - b);
 		var result;
@@ -33,7 +47,7 @@ function Mixer(){
 	}
 
 	function demultiply_opacity(color){
-		if(color.a > 0){
+		if(color.a > 0){ // avoid divide by zero errors
 			$.each(color, function(k, v){
 				if(k !== 'a')
 					color[k] = color[k] / color.a
@@ -42,9 +56,22 @@ function Mixer(){
 		return color;
 	}
 
+	function rgb_mixer_wrapper(hsl, callback){
+
+	}
+
+	/*
+	todo: implement
+	These will wrap and provide basic functionality for making
+	new mixing modes. They perform the staple procedures needed before and after
+	a mix. 
+	*/
+	function hsl_mixer_wrapper(top, bottom, opacity, callback){
+		premultiply_opacity(top);
+	}
+
 	var modes = {
 		'color': function(top, bottom, opacity){
-			var blended = {};
 			console.log('mixing with opacity: ', opacity);
 
 			premultiply_opacity(top);
@@ -61,7 +88,6 @@ function Mixer(){
 		'normal': function(top, bottom, opacity){
 			console.log('mixing with opacity: ', opacity);
 			console.log('mixing:', top, 'and bottom:', bottom)
-			var blended = {};
 			premultiply_opacity(top);
 			top = hsl_to_rgb(top);
 			bottom = hsl_to_rgb(bottom);
@@ -76,6 +102,23 @@ function Mixer(){
 			var mixed_hsl = rgb_to_hsl(mixed_rgb);
 			console.log(mixed_hsl);
 			return demultiply_opacity(mixed_hsl, top.a);
+		},
+		'overlay': function(top, bottom, opacity){
+			top = hsl_to_rgb(top);
+			bottom = hsl_to_rgb(bottom);
+
+			function mix(a, b){
+				return (b < 128) ? (2 * a * b / 255):(255 - 2 * (255 - a) * (255 - b) / 255));
+			}
+
+			// Compute the mixed layer, igoring opacity
+			var mixed_rgb = {
+				r: interp(bottom.r, top.r, opacity)
+			}
+
+			// Interpolate result with original base layer
+			mixed_rgb.r = interp(bottom.r, top.r, opacity); 
+			
 		}
 	}
 
