@@ -14,7 +14,11 @@ class Ilink < Sinatra::Base
 	set :public_folder, File.join(File.dirname(__FILE__), '..', 'public')
 
 	get "/" do
-		logger.info "root path"
+		
+	end
+
+	get "/hiss" do
+		slim :hiss, :layout => :hiss_layout
 	end
 
 	get "/weather/grid" do

@@ -36,3 +36,19 @@ Shade.prototype.make_blue = function(base, a){
 		a: a || 1
 	}
 };
+
+Shade.prototype.colors = {
+	purpley_blue: {
+		h: 250,
+		s: 0.63,
+		l: 0.4,
+		a:1
+	}
+}
+
+Shade.prototype.make = function(_color, a){
+	var color = this.colors[_color];
+	color.a = a;
+	console.log(color);
+	return color;
+}

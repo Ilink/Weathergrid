@@ -11,16 +11,8 @@ function Colors(){
 		});
 	}
 
-	function prepare_data(data){
-		data.temp = Number(data.temp);
-		data.cloud_cover = Number(data.cloud_cover);
-		data.wind_speed = Number(data.wind_speed);
-		data.visibility = Number(data.visibility);
-		return data;
-	}
-
 	this.update = function(new_data){
-		data = prepare_data(new_data);
+		data = new_data;
 		layout.update();
 		setup_colors();
 	}

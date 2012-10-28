@@ -29,7 +29,7 @@ function Weathercolor(){
 		// temp = 80;
 
 		var base_h;
-		season = 'fall'
+		season = 'winter'
 		switch(season) {
 			case 'fall':
 				base_h = 18;
@@ -55,7 +55,7 @@ function Weathercolor(){
 			// h: base_h,
 			// s: Math.max(fitted_temp + row * 2, 50),
 			// l: cap(fitted_temp - (row/10), 0, 100)
-			s: 0.75,
+			s: 0.2,
 			l: 0.60,
 			a: 1
 		};
@@ -63,30 +63,36 @@ function Weathercolor(){
 
 	function mix_cloud(base, percent){
 		var grey = shade.make_grey_shade(base);
-		// var percent = 0.6;
-		console.log('grey mix', grey);
 		return mixer.mix('normal', grey, base, percent);
 	}
 
 	function mix_experiment(base){
 		var exp = shade.make_grey_shade(base, 1);
-		console.log('grey', exp);
+		// console.log('grey', exp);
 		return mixer.mix('normal', exp, base, 1);
 	}
 
 	function mix_blue(base, percent){
 		var blue = shade.make_blue(base, 1);
-		console.log('blue', blue);
+		// console.log('blue', blue);
 		return mixer.mix('normal', blue, base, percent);
+	}
+
+	function mix_purple(base, percent){
+		var purpley_blue = shade.make('purpley_blue', 1);
+		var purpley_blue = {
+			h: 250,
+			s: 0.63,
+			l: 0.4,
+			a: 1
+		};
+
+		return mixer.mix('normal', purpley_blue, base, percent);
 	}
 
 	function mix_compliment(base, percent){
 		var compliment = get_compliment(hsl_to_rgb(base));
 		compliment = rgb_to_hsl(compliment);
-
-		// var blue = shade.make_blue(base, 1);
-		// return mixer.mix('normal', blue, base, percent);
-		// console.log(compliment);
 
 		return mixer.mix('normal', compliment, base, percent);
 	}
@@ -96,20 +102,32 @@ function Weathercolor(){
 		return mixer.mix('overlay', blue, base, percent);
 	}
 
+	function lower_saturation(color, x){
+		// we dont want the saturation higher than the original
+		x = fit_bound(x, 0, 1, 0, color.s);
+		color.s = x;
+		return color;
+	}
+
 	this.make = function(i, row, col, weather_data){
-		increment = gradient_increment(row) / 2;
+		increment = gradient_increment(row) / 1.8;
 		base = make_base(i, row, col, weather_data.season, weather_data.temp);
 		final_color = base;
+		weather_data.temp = 40;
+		console.log(weather_data);
 		var fitted_temp = fit_bound(weather_data.temp, 40, 100, 0, 1);
+		console.log(1-fitted_temp);
 
-		// final_color = mix_compliment(base, .75);
-		final_color = overlay_test(base, 0.35);
-		// final_color = mix_blue(final_color, 0.7);
-		// final_color = mix_cloud(final_color, .70);
+		
+		final_color = mix_blue(base, 1-fitted_temp);
+		// lower_saturation(final_color,  1-weather_data.cloud_cover);
+		lower_saturation(final_color,  0.75);
 
-		// final_color.h += increment;
+		// final_color = overlay_test(final_color, .7);
 
-		// final_color = mix_experiment(base);
+
+		final_color.h += increment;
+
 		return make_hsl(final_color);
 	}
 

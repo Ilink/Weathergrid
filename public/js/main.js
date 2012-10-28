@@ -7,12 +7,12 @@ $(document).ready(function(){
 
 		// Initially, we must set up both the initial data and the resize event
 		$(document).one('weather', function(e, weather_data){
-			colors.update(geo);
+			colors.update(weather_data);
 			$(window).on('resize', function(){
 				colors.update_layout();
 			});
 			$(document).on('weather', function(e, weather_data){
-				colors.update(geo);
+				colors.update(weather_data);
 			});
 		});
 
