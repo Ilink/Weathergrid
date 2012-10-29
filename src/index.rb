@@ -25,6 +25,10 @@ class Ilink < Sinatra::Base
 		slim :weathergrid, :layout => :layout
 	end
 
+	get "/particles" do
+		slim :particles, :layout => :particles_layout
+	end
+
 	get "/weather.json" do	
 		content_type 'json', :charset => 'utf-8'
 		if(params.nil? || !params.has_key?('coords'))

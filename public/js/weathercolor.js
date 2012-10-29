@@ -75,7 +75,7 @@ function Weathercolor(){
 	function mix_blue(base, percent){
 		var blue = shade.make_blue(base, 1);
 		// console.log('blue', blue);
-		return mixer.mix('normal', blue, base, percent);
+		return mixer.mix('overlay', blue, base, percent);
 	}
 
 	function mix_purple(base, percent){
@@ -113,18 +113,11 @@ function Weathercolor(){
 		increment = gradient_increment(row) / 1.8;
 		base = make_base(i, row, col, weather_data.season, weather_data.temp);
 		final_color = base;
-		weather_data.temp = 40;
-		console.log(weather_data);
+		// weather_data.temp = 100;
 		var fitted_temp = fit_bound(weather_data.temp, 40, 100, 0, 1);
-		console.log(1-fitted_temp);
 
-		
-		final_color = mix_blue(base, 1-fitted_temp);
-		// lower_saturation(final_color,  1-weather_data.cloud_cover);
-		lower_saturation(final_color,  0.75);
-
-		// final_color = overlay_test(final_color, .7);
-
+		final_color = mix_blue(base, fitted_temp);
+		lower_saturation(final_color,  1-weather_data.cloud_cover);
 
 		final_color.h += increment;
 
