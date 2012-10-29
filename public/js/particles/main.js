@@ -24,9 +24,10 @@ var canvas,
 					screenWidth : 0, 
 					screenHeight: 0 };
 
-function init(){
-	var shader_loader = new Shader_loader();
-	shader_loader.load('vs');
+function init(shaders){
+	// vertex_shader = shaders.vs;
+	// fragment_shader = shaders.fs;
+
 	vertex_shader = document.getElementById('vs').textContent;
 	fragment_shader = document.getElementById('fs').textContent;
 
@@ -72,7 +73,7 @@ function createProgram(vertex, fragment){
 
 	if ( !gl.getProgramParameter( program, gl.LINK_STATUS ) ) {
 
-		alert( "ERROR:\n" +
+		console.log( "ERROR:\n" +
 		"VALIDATE_STATUS: " + gl.getProgramParameter( program, gl.VALIDATE_STATUS ) + "\n" +
 		"ERROR: " + gl.getError() + "\n\n" +
 		"- Vertex Shader -\n" + vertex + "\n\n" +
@@ -92,7 +93,7 @@ function createShader( src, type ) {
 
 	if ( !gl.getShaderParameter( shader, gl.COMPILE_STATUS ) ) {
 
-		alert( ( type == gl.VERTEX_SHADER ? "VERTEX" : "FRAGMENT" ) + " SHADER:\n" + gl.getShaderInfoLog( shader ) );
+		console.log( ( type == gl.VERTEX_SHADER ? "VERTEX" : "FRAGMENT" ) + " SHADER:\n" + gl.getShaderInfoLog( shader ) );
 		return null;
 	}
 	return shader;
@@ -138,15 +139,19 @@ function render() {
 	gl.disableVertexAttribArray( vertex_position );
 }
 
-
-// init();
-// animate();
+insert_shaders = function(shaders){
+	$.each(shaders, function(i, shader){
+		$('body').prepend(shader);
+	});
+}
 
 $(document).ready(function(){
 	var shader_loader = new Shader_loader();
 	shader_loader.load(['vs', 'fs']);
 
-	$(document).on('shaders_loaded', function(e, data){
-		console.log(data);
+	$(document).on('shaders_loaded', function(e, shaders){
+		insert_shaders(shaders);
+		init(shaders);
+		animate();
 	});
 });
