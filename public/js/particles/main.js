@@ -25,9 +25,6 @@ var canvas,
 					screenHeight: 0 };
 
 function init(shaders){
-	// vertex_shader = shaders.vs;
-	// fragment_shader = shaders.fs;
-
 	vertex_shader = document.getElementById('vs').textContent;
 	fragment_shader = document.getElementById('fs').textContent;
 
@@ -43,9 +40,24 @@ function init(shaders){
 
 	// Create Vertex buffer (2 triangles)
 
+	// original square
+	// var verts = [
+	// 	-1.0, -1.0, 1.0,
+	// 	-1.0, -1.0, 1.0,
+	// 	1.0, -1.0, 1.0,
+	// 	1.0, -1.0, 1.0
+	// ]
+
+	var verts = [
+		-0.5, -0.5, 1.0,
+		-0.5, -0.5, 1.0,
+		0.5, -0.5, 1.0,
+		0.5, -0.5, 1.0
+	]
+
 	buffer = gl.createBuffer();
 	gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
-	gl.bufferData( gl.ARRAY_BUFFER, new Float32Array( [ - 1.0, - 1.0, 1.0, - 1.0, - 1.0, 1.0, 1.0, - 1.0, 1.0, 1.0, - 1.0, 1.0 ] ), gl.STATIC_DRAW );
+	gl.bufferData( gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW );
 
 	// Create Program
 
