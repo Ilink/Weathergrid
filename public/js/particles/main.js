@@ -24,6 +24,9 @@ var canvas,
 					screenWidth : 0, 
 					screenHeight: 0 };
 
+var mvMatrix = mat4.create();
+var pMatrix = mat4.create();
+
 function init(shaders){
 	vertex_shader = document.getElementById('vs').textContent;
 	fragment_shader = document.getElementById('fs').textContent;
@@ -81,6 +84,9 @@ function createProgram(vertex, fragment){
 	gl.deleteShader( vs );
 	gl.deleteShader( fs );
 
+    gl.uniformMatrix4fv(program.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(program.mvMatrixUniform, false, mvMatrix);
+
 	gl.linkProgram( program );
 
 	if ( !gl.getProgramParameter( program, gl.LINK_STATUS ) ) {
@@ -126,12 +132,23 @@ function animate() {
 	render();
 }
 
+function setMatrixUniforms() {
+    gl.uniformMatrix4fv(currentProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(currentProgram.mvMatrixUniform, false, mvMatrix);
+}
+
 function render() {
 	if ( !currentProgram ) return;
 
 	parameters.time = new Date().getTime() - parameters.start_time;
 
 	gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+
+    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+    mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix, [-20.0, 5000.0, -7.0]);
+
+    setMatrixUniforms();
 
 	// Load program into GPU
 
