@@ -3,184 +3,224 @@
  * paulirish.com/2011/requestanimationframe-for-smart-animating/
  */
 window.requestAnimationFrame = window.requestAnimationFrame || ( function() {
-	return  window.webkitRequestAnimationFrame ||
-			window.mozRequestAnimationFrame ||
-			window.oRequestAnimationFrame ||
-			window.msRequestAnimationFrame ||
-			function(  callback, element ) {
-				window.setTimeout( callback, 1000 / 60 );
-			};
+    return  window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function(  callback, element ) {
+                window.setTimeout( callback, 1000 / 60 );
+            };
 })();
 
-
-var canvas, 
-	gl, 
-	buffer, 
-	vertex_shader, fragment_shader, 
-	currentProgram,
-	vertex_position, 
-	parameters = {  start_time  : new Date().getTime(), 
-					time        : 0, 
-					screenWidth : 0, 
-					screenHeight: 0 };
-
+var parameters = {  start_time  : new Date().getTime(), 
+                    time        : 0, 
+                    screenWidth : 0, 
+                    screenHeight: 0 };
+var shaderProgram;
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
+var triangleVertexPositionBuffer;
+var squareVertexPositionBuffer;
+var gl;
 
-function init(shaders){
-	vertex_shader = document.getElementById('vs').textContent;
-	fragment_shader = document.getElementById('fs').textContent;
+function resize_viewport( canvas ) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-	canvas = document.querySelector( 'canvas' );
+    parameters.screenWidth = canvas.width;
+    parameters.screenHeight = canvas.height;
 
-	// Initialise WebGL
-	try {
-		gl = canvas.getContext( 'experimental-webgl' );
-	} catch( error ) { }
-	if ( !gl ) {
-		throw "cannot create webgl context";
-	}
-
-	// Create Vertex buffer (2 triangles)
-
-	// original square
-	// var verts = [
-	// 	-1.0, -1.0, 1.0,
-	// 	-1.0, -1.0, 1.0,
-	// 	1.0, -1.0, 1.0,
-	// 	1.0, -1.0, 1.0
-	// ]
-
-	var verts = [
-		-0.5, -0.5, 1.0,
-		-0.5, -0.5, 1.0,
-		0.5, -0.5, 1.0,
-		0.5, -0.5, 1.0
-	]
-
-	buffer = gl.createBuffer();
-	gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
-	gl.bufferData( gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW );
-
-	// Create Program
-
-	currentProgram = createProgram( vertex_shader, fragment_shader );
-
-	onWindowResize();
-	window.addEventListener( 'resize', onWindowResize, false );
+    gl.viewport( 0, 0, canvas.width, canvas.height );
 }
 
-function createProgram(vertex, fragment){
-	var program = gl.createProgram();
-
-	var vs = createShader( vertex, gl.VERTEX_SHADER );
-	var fs = createShader( '#ifdef GL_ES\nprecision highp float;\n#endif\n\n' + fragment, gl.FRAGMENT_SHADER );
-
-	if ( vs == null || fs == null ) return null;
-
-	gl.attachShader( program, vs );
-	gl.attachShader( program, fs );
-
-	gl.deleteShader( vs );
-	gl.deleteShader( fs );
-
-    gl.uniformMatrix4fv(program.pMatrixUniform, false, pMatrix);
-    gl.uniformMatrix4fv(program.mvMatrixUniform, false, mvMatrix);
-
-	gl.linkProgram( program );
-
-	if ( !gl.getProgramParameter( program, gl.LINK_STATUS ) ) {
-
-		console.log( "ERROR:\n" +
-		"VALIDATE_STATUS: " + gl.getProgramParameter( program, gl.VALIDATE_STATUS ) + "\n" +
-		"ERROR: " + gl.getError() + "\n\n" +
-		"- Vertex Shader -\n" + vertex + "\n\n" +
-		"- Fragment Shader -\n" + fragment );
-
-		return null;
-	}
-
-	return program;
+function rotate(deg, matrix, time){
+    var rotation_matrix = mat4.create([
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0
+    ]);
+    // mat4.multiply(matrix, rotation_matrix, matrix)
+    mat4.rotate(matrix, (time + deg) / 1000, [0, 0, 1]);
 }
 
-function createShader( src, type ) {
-	var shader = gl.createShader( type );
-
-	gl.shaderSource( shader, src );
-	gl.compileShader( shader );
-
-	if ( !gl.getShaderParameter( shader, gl.COMPILE_STATUS ) ) {
-
-		console.log( ( type == gl.VERTEX_SHADER ? "VERTEX" : "FRAGMENT" ) + " SHADER:\n" + gl.getShaderInfoLog( shader ) );
-		return null;
-	}
-	return shader;
+function initGL(canvas) {
+    try {
+        gl = canvas.getContext("experimental-webgl");
+    } catch (e) {
+    }
+    if (!gl) {
+        console.log("Could not initialise WebGL, sorry :-(");
+    }
 }
 
-function onWindowResize( event ) {
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
 
-	parameters.screenWidth = canvas.width;
-	parameters.screenHeight = canvas.height;
+function getShader(gl, id) {
+    var shaderScript = document.getElementById(id);
+    if (!shaderScript) {
+        console.log('shader of id '+id+' not found');
+        return null;
+    }
 
-	gl.viewport( 0, 0, canvas.width, canvas.height );
+    var str = "";
+    var k = shaderScript.firstChild;
+    while (k) {
+        if (k.nodeType == 3) {
+            str += k.textContent;
+        }
+        k = k.nextSibling;
+    }
+
+    var shader;
+    console.log(shaderScript.type);
+    if (shaderScript.type == "x-shader/fragment") {
+        shader = gl.createShader(gl.FRAGMENT_SHADER);
+    } else if (shaderScript.type == "x-shader/vertex") {
+        shader = gl.createShader(gl.VERTEX_SHADER);
+    } else {
+        return null;
+    }
+
+    gl.shaderSource(shader, str);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.log(gl.getShaderInfoLog(shader));
+        return null;
+    }
+
+    return shader;
 }
 
-function animate() {
-	requestAnimationFrame( animate );
-	render();
+
+
+function initShaders() {
+    var fragmentShader = getShader(gl, "fs");
+    var vertexShader = getShader(gl, "vs");
+
+    shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        console.log("Could not initialise shaders");
+    }
+
+    gl.useProgram(shaderProgram);
+
+    /*
+    It looks like this is hooked into the vertex shader
+    aVertexPosition
+    I presume this is because it sets position info for the verts
+    */
+    shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "position");
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
+    shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+    shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 }
+
 
 function setMatrixUniforms() {
-    gl.uniformMatrix4fv(currentProgram.pMatrixUniform, false, pMatrix);
-    gl.uniformMatrix4fv(currentProgram.mvMatrixUniform, false, mvMatrix);
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 }
+
+function initBuffers() {
+    triangleVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+    var vertices = [
+         0.0,  1.0,  0.0,
+        -1.0, -1.0,  0.0,
+         1.0, -1.0,  0.0
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    triangleVertexPositionBuffer.itemSize = 3;
+    triangleVertexPositionBuffer.numItems = 3;
+
+    squareVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+    vertices = [
+         1.0,  1.0,  0.0,
+        -1.0,  1.0,  0.0,
+         1.0, -1.0,  0.0,
+        -1.0, -1.0,  0.0
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    squareVertexPositionBuffer.itemSize = 3;
+    squareVertexPositionBuffer.numItems = 4;
+}
+
+function animate(){
+    render();
+    requestAnimationFrame(animate);
+}
+
 
 function render() {
-	if ( !currentProgram ) return;
+    parameters.time = new Date().getTime() - parameters.start_time;
 
-	parameters.time = new Date().getTime() - parameters.start_time;
+    // gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+    // $('canvas')[0].width = window.innerWidth;
+    // $('canvas')[0].height = window.innerHeight;
+    // gl.viewport(0, 0, $('canvas').width(), $('canvas').height());
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-	gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
-    mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+    // mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+    mat4.perspective(45, $('canvas').width() / $('canvas').height(), 0.1, 100.0, pMatrix);
+
     mat4.identity(mvMatrix);
-    mat4.translate(mvMatrix, [-20.0, 5000.0, -7.0]);
 
+    mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
     setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
 
-	// Load program into GPU
+    rotate(0.1, mvMatrix, parameters.time);
 
-	gl.useProgram( currentProgram );
+    gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), parameters.time / 1000 );
+    gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), parameters.screenWidth, parameters.screenHeight );
 
-	// Set values to program variables
-
-	gl.uniform1f( gl.getUniformLocation( currentProgram, 'time' ), parameters.time / 1000 );
-	gl.uniform2f( gl.getUniformLocation( currentProgram, 'resolution' ), parameters.screenWidth, parameters.screenHeight );
-
-	// Render geometry
-
-	gl.bindBuffer( gl.ARRAY_BUFFER, buffer );
-	gl.vertexAttribPointer( vertex_position, 2, gl.FLOAT, false, 0, 0 );
-	gl.enableVertexAttribArray( vertex_position );
-	gl.drawArrays( gl.TRIANGLES, 0, 6 );
-	gl.disableVertexAttribArray( vertex_position );
+    mat4.translate(mvMatrix, [5.0, 0.0, 0.0]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+    setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
 }
 
-insert_shaders = function(shaders){
-	$.each(shaders, function(i, shader){
-		$('body').prepend(shader);
-	});
+function insert_shaders(shaders){
+    $.each(shaders, function(i, shader){
+        $('body').prepend(shader);
+    });
+}
+
+function webGLStart(shaders) {
+    insert_shaders(shaders);
+    var canvas = $('canvas')[0];
+    initGL(canvas);
+    
+    initShaders();
+    resize_viewport(canvas);
+    $(window).on('resize', function(){
+        resize_viewport(canvas);
+    });
+    
+    initBuffers();
+
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.enable(gl.DEPTH_TEST);
+
+    window.requestAnimationFrame(animate);
 }
 
 $(document).ready(function(){
-	var shader_loader = new Shader_loader();
-	shader_loader.load(['vs', 'fs']);
+    var shader_loader = new Shader_loader();
+    shader_loader.load(['vs', 'fs']);
 
-	$(document).on('shaders_loaded', function(e, shaders){
-		insert_shaders(shaders);
-		init(shaders);
-		animate();
-	});
+    $(document).on('shaders_loaded', function(e, shaders){
+        webGLStart(shaders);
+    });
 });

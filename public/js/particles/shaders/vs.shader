@@ -1,9 +1,18 @@
 <script id="vs" type="x-shader/vertex"> 
  
+	// attribute vec3 position;
+
+	// void main() {
+	// 	gl_Position = vec4( position, 1.0 );
+	// }
+
 	attribute vec3 position;
 
-	void main() {
-		gl_Position = vec4( position, 1.0 );
+	uniform mat4 uMVMatrix;
+	uniform mat4 uPMatrix;
+
+	void main(void) {
+	    gl_Position = uPMatrix * uMVMatrix * vec4(position, 1.0);
 	}
 
 </script>
