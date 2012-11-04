@@ -176,11 +176,12 @@ function Engine(canvas, shaders){
 
     function build(){
         $.each(geometry, function(i, geo){
+            setMatrixUniforms();
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
-            mat4.translate(mvMatrix, [-7.0, 0.0, -5.0]);
+            mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
 
             gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
-            setMatrixUniforms();
+            
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });
     }
@@ -194,9 +195,9 @@ function Engine(canvas, shaders){
         gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), parameters.screenWidth, parameters.screenHeight );
 
         mat4.perspective(45, canvas.width / canvas.height, 0.1, 100.0, pMatrix);
-        build();
-        mat4.identity(mvMatrix);
         
+        mat4.identity(mvMatrix);
+        build();
 
         mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
         gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
@@ -278,12 +279,14 @@ $(document).ready(function(){
             -1.0, -1.0,  0.0
         ], tmat);
 
-        // var geo2 = engine.add_geo([
-        //      1.0,  1.0,  0.0,
-        //     -1.0,  1.0,  0.0,
-        //      1.0, -1.0,  0.0,
-        //     -1.0, -1.0,  0.0
-        // ], tmat);
+
+
+        var geo2 = engine.add_geo([
+             1.0,  1.0,  0.0,
+            -1.0,  1.0,  0.0,
+             1.0, -1.0,  0.0,
+            -1.0, -1.0,  0.0
+        ], tmat);
 
         // console.log(geo1.buffer.itemSize,geo2.buffer.itemSize);
 
