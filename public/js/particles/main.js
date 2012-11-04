@@ -12,6 +12,16 @@ window.requestAnimationFrame = window.requestAnimationFrame || ( function() {
             };
 })();
 
+function Engine(canvas){
+
+    
+
+    this.start = function(){
+
+    }
+}
+
+
 var parameters = {  start_time  : new Date().getTime(), 
                     time        : 0, 
                     screenWidth : 0, 
@@ -40,7 +50,7 @@ function rotate(deg, matrix, time){
         0, 0, 0, 0,
         0, 0, 0, 0
     ]);
-    // mat4.multiply(matrix, rotation_matrix, matrix)
+    // mat4.multiply(matrix, rotation_matrix, matrix);
     mat4.rotate(matrix, (time + deg) / 1000, [0, 0, 1]);
 }
 
@@ -161,12 +171,7 @@ function animate(){
 function render() {
     parameters.time = new Date().getTime() - parameters.start_time;
 
-    // gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-    // $('canvas')[0].width = window.innerWidth;
-    // $('canvas')[0].height = window.innerHeight;
-    // gl.viewport(0, 0, $('canvas').width(), $('canvas').height());
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
 
     // mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
     mat4.perspective(45, $('canvas').width() / $('canvas').height(), 0.1, 100.0, pMatrix);

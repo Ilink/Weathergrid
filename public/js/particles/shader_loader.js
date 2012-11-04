@@ -1,3 +1,8 @@
+/*
+Shader Loader
+Loads shader files via AJAX.
+*/
+
 function Shader_loader(){
 	var total = 0, results = {}, rec = 0;
 
@@ -25,12 +30,12 @@ function Shader_loader(){
 		if(_.isArray(name)){
 			total = name.length;
 			$.each(name, function(i, v){
-				filename = v + ".shader";
+				filename = v + ".glsl";
 				load(filename);
 			});
 		} else {
 			total = 1;
-			name += '.shader';
+			name += '.glsl';
 			load(name);
 		}
 	};
