@@ -177,11 +177,11 @@ function Engine(canvas, shaders){
     function build(){
         $.each(geometry, function(i, geo){
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
-            // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
-            gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-            // setMatrixUniforms();
-            // mat4.translate(mvMatrix, [-0.0, 0.0, -0.0]);
-            gl.drawArrays(gl.TRIANGLES, 0, geo.buffer.numItems);
+            mat4.translate(mvMatrix, [-7.0, 0.0, -5.0]);
+
+            gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
+            setMatrixUniforms();
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });
     }
 
