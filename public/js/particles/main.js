@@ -24,6 +24,17 @@ function Engine(canvas, shaders){
     var triangleVertexPositionBuffer;
     var squareVertexPositionBuffer;
     var gl;
+    canvas = canvas[0];
+
+    var geometry = [];
+
+    // EG: 
+    // var geometry = [{
+    //     verts: [0,1..],
+    //     buffer: buffer,
+    //     shader: shader
+    // }];
+
 
     function resize_viewport( canvas ) {
         canvas.width = window.innerWidth;
@@ -36,13 +47,6 @@ function Engine(canvas, shaders){
     }
 
     function rotate(deg, matrix, time){
-        var rotation_matrix = mat4.create([
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0,
-            0, 0, 0, 0
-        ]);
-        // mat4.multiply(matrix, rotation_matrix, matrix);
         mat4.rotate(matrix, (time + deg) / 1000, [0, 0, 1]);
     }
 
@@ -141,17 +145,28 @@ function Engine(canvas, shaders){
         triangleVertexPositionBuffer.itemSize = 3;
         triangleVertexPositionBuffer.numItems = 3;
 
-        squareVertexPositionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+
         vertices = [
              1.0,  1.0,  0.0,
             -1.0,  1.0,  0.0,
              1.0, -1.0,  0.0,
             -1.0, -1.0,  0.0
         ];
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        squareVertexPositionBuffer.itemSize = 3;
-        squareVertexPositionBuffer.numItems = 4;
+        squareVertexPositionBuffer = init_buffer(vertices);
+        // squareVertexPositionBuffer = gl.createBuffer();
+        // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+        // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        // squareVertexPositionBuffer.itemSize = 3;
+        // squareVertexPositionBuffer.numItems = 4;
+    }
+
+    function init_buffer(verts){
+        buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+        buffer.itemSize = 3;
+        buffer.numItems = 4; // hard coded because i only want to draw squares
+        return buffer;
     }
 
     function animate(){
@@ -159,33 +174,46 @@ function Engine(canvas, shaders){
         requestAnimationFrame(animate);
     }
 
+    function build(){
+        $.each(geometry, function(i, geo){
+            gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
+            // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
+            gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+            // setMatrixUniforms();
+            // mat4.translate(mvMatrix, [-0.0, 0.0, -0.0]);
+            gl.drawArrays(gl.TRIANGLES, 0, geo.buffer.numItems);
+        });
+    }
+
 
     function render() {
         parameters.time = new Date().getTime() - parameters.start_time;
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), parameters.time / 1000 );
+        gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), parameters.screenWidth, parameters.screenHeight );
 
-        // mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-        mat4.perspective(45, $('canvas').width() / $('canvas').height(), 0.1, 100.0, pMatrix);
-
+        mat4.perspective(45, canvas.width / canvas.height, 0.1, 100.0, pMatrix);
+        build();
         mat4.identity(mvMatrix);
+        
 
         mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
         gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
         gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
         setMatrixUniforms();
-        gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
+        // gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
 
-        rotate(0.1, mvMatrix, parameters.time);
+        // rotate(0.1, mvMatrix, parameters.time);
 
-        gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), parameters.time / 1000 );
-        gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), parameters.screenWidth, parameters.screenHeight );
 
         mat4.translate(mvMatrix, [5.0, 0.0, 0.0]);
         gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
         gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
         setMatrixUniforms();
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
+        // gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
+
+        
     }
 
     function insert_shaders(shaders){
@@ -194,11 +222,7 @@ function Engine(canvas, shaders){
         });
     }
 
-    function webGLStart() {
-        insert_shaders(shaders);
-        var canvas = $('canvas')[0];
-        initGL(canvas);
-        
+    function webGLStart() {        
         initShaders();
         resize_viewport(canvas);
         $(window).on('resize', function(){
@@ -213,11 +237,21 @@ function Engine(canvas, shaders){
         window.requestAnimationFrame(animate);
     }
 
-   
+    insert_shaders(shaders);
+    initGL(canvas);
+
+    this.add_geo = function(verts, mat){
+        var geo = {
+            verts: verts,
+            buffer: init_buffer(verts)
+        }
+        geometry.push(geo);
+        return geo;
+    };
 
     this.start = function(){
         webGLStart();
-    }
+    };
 }
 
 
@@ -226,8 +260,33 @@ $(document).ready(function(){
     shader_loader.load(['vs', 'fs']);
 
     $(document).on('shaders_loaded', function(e, shaders){
-        // webGLStart(shaders);
         var engine = new Engine($('canvas'), shaders);
+
+        var tmat = mat4.create();
+
+        // This is a triangle, which we arent doing
+        // engine.add_geo([
+        //      0.0,  1.0,  0.0,
+        //     -1.0, -1.0,  0.0,
+        //      1.0, -1.0,  0.0
+        // ], tmat);
+
+        var geo1 = engine.add_geo([
+             1.0,  1.0,  0.0,
+            -1.0,  1.0,  0.0,
+             1.0, -1.0,  0.0,
+            -1.0, -1.0,  0.0
+        ], tmat);
+
+        // var geo2 = engine.add_geo([
+        //      1.0,  1.0,  0.0,
+        //     -1.0,  1.0,  0.0,
+        //      1.0, -1.0,  0.0,
+        //     -1.0, -1.0,  0.0
+        // ], tmat);
+
+        // console.log(geo1.buffer.itemSize,geo2.buffer.itemSize);
+
         engine.start();
     });
 });
