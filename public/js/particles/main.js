@@ -12,6 +12,16 @@ window.requestAnimationFrame = window.requestAnimationFrame || ( function() {
             };
 })();
 
+/*
+Engine
+I think each engine should represent a complete webgl "program"
+Mostly I just mean that each engine has its own shaders.
+I dont know about sharing contexts or anything. or how it should
+be done yet. we will see!
+
+
+*/
+
 function Engine(canvas, shaders){
 
     var parameters = {  start_time  : new Date().getTime(), 
@@ -28,7 +38,7 @@ function Engine(canvas, shaders){
 
     var geometry = [];
 
-    // EG: 
+    // something like this:
     // var geometry = [{
     //     verts: [0,1..],
     //     buffer: buffer,
@@ -176,12 +186,15 @@ function Engine(canvas, shaders){
 
     function build(){
         $.each(geometry, function(i, geo){
+            mat4.identity(mvMatrix);
+            mat4.translate(mvMatrix, geo.trans);
+
+            if(i === 0) {
+                rotate(0.1, mvMatrix, parameters.time);
+            }
             setMatrixUniforms();
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
-            mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
-
             gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
-            
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });
     }
@@ -195,26 +208,21 @@ function Engine(canvas, shaders){
         gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), parameters.screenWidth, parameters.screenHeight );
 
         mat4.perspective(45, canvas.width / canvas.height, 0.1, 100.0, pMatrix);
-        
-        mat4.identity(mvMatrix);
+                
         build();
 
-        mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
-        gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-        gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-        setMatrixUniforms();
+        // mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
+        // gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
+        // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        // setMatrixUniforms();
         // gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
 
-        // rotate(0.1, mvMatrix, parameters.time);
-
-
-        mat4.translate(mvMatrix, [5.0, 0.0, 0.0]);
-        gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
-        gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-        setMatrixUniforms();
+        // mat4.translate(mvMatrix, [5.0, 0.0, 0.0]);
+        // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
+        // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+        // setMatrixUniforms();
         // gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
 
-        
     }
 
     function insert_shaders(shaders){
@@ -230,7 +238,7 @@ function Engine(canvas, shaders){
             resize_viewport(canvas);
         });
         
-        initBuffers();
+        // initBuffers(); // buffers are now added from "add_geo"
 
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.enable(gl.DEPTH_TEST);
@@ -244,7 +252,8 @@ function Engine(canvas, shaders){
     this.add_geo = function(verts, mat){
         var geo = {
             verts: verts,
-            buffer: init_buffer(verts)
+            buffer: init_buffer(verts),
+            trans: mat
         }
         geometry.push(geo);
         return geo;
@@ -263,14 +272,8 @@ $(document).ready(function(){
     $(document).on('shaders_loaded', function(e, shaders){
         var engine = new Engine($('canvas'), shaders);
 
-        var tmat = mat4.create();
-
-        // This is a triangle, which we arent doing
-        // engine.add_geo([
-        //      0.0,  1.0,  0.0,
-        //     -1.0, -1.0,  0.0,
-        //      1.0, -1.0,  0.0
-        // ], tmat);
+        // var tmat = mat4.create();
+        var tmat = [1.5, 0.0, -7.0];
 
         var geo1 = engine.add_geo([
              1.0,  1.0,  0.0,
@@ -280,7 +283,7 @@ $(document).ready(function(){
         ], tmat);
 
 
-
+        tmat = [-1.5, 0.0, -8.0];
         var geo2 = engine.add_geo([
              1.0,  1.0,  0.0,
             -1.0,  1.0,  0.0,
