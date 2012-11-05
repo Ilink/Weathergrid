@@ -217,12 +217,6 @@ function Engine(canvas, shaders){
         // setMatrixUniforms();
         // gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
 
-        // mat4.translate(mvMatrix, [5.0, 0.0, 0.0]);
-        // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
-        // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, squareVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-        // setMatrixUniforms();
-        // gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
-
     }
 
     function insert_shaders(shaders){
@@ -290,6 +284,10 @@ $(document).ready(function(){
              1.0, -1.0,  0.0,
             -1.0, -1.0,  0.0
         ], tmat);
+
+        window.setInterval(function(){
+            geo2.trans[0] += 0.1;
+        }, 1000);
 
         // console.log(geo1.buffer.itemSize,geo2.buffer.itemSize);
 
