@@ -208,7 +208,7 @@ function Engine(canvas, shaders){
         gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), parameters.screenWidth, parameters.screenHeight );
 
         mat4.perspective(45, canvas.width / canvas.height, 0.1, 100.0, pMatrix);
-                
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         build();
 
         // mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
@@ -258,6 +258,30 @@ function Engine(canvas, shaders){
     };
 }
 
+var geo = {
+    rectangle: function(width, height){
+        return [
+            0.0,    0.0,        0.0,
+            width,  0.0,        0.0,
+            0.0,    height,     0.0,
+            width,  height,     0.0
+        ];
+    }
+}
+
+function Rain(){
+    var geo = [];
+    var tmat;
+    
+    for(var i = 0; i < 100; i++){
+        tmat = [i, 0.0, 0];
+        verts = geo.rectangle(0.05, 0.5);
+        var _geo = engine.add_geo(geo.rectangle(0.05, 0.5), tmat);
+        // _geo.velocity =
+        geo.push(_geo);
+    }
+}
+
 
 $(document).ready(function(){
     var shader_loader = new Shader_loader();
@@ -267,7 +291,7 @@ $(document).ready(function(){
         var engine = new Engine($('canvas'), shaders);
 
         // var tmat = mat4.create();
-        var tmat = [1.5, 0.0, -7.0];
+        var tmat = [-1.5, 0.0, -7.0];
 
         var geo1 = engine.add_geo([
              1.0,  1.0,  0.0,
@@ -276,18 +300,29 @@ $(document).ready(function(){
             -1.0, -1.0,  0.0
         ], tmat);
 
-
-        tmat = [-1.5, 0.0, -8.0];
+        tmat = [1.5, 0.0, -8.0];
         var geo2 = engine.add_geo([
-             1.0,  1.0,  0.0,
-            -1.0,  1.0,  0.0,
-             1.0, -1.0,  0.0,
-            -1.0, -1.0,  0.0
+             0.0,  0.0,  0.0,
+             0.2,  0.0,  0.0,
+             0.0,  1.0,  0.0,
+             0.2,  1.0,  0.0
         ], tmat);
 
-        window.setInterval(function(){
-            geo2.trans[0] += 0.1;
-        }, 1000);
+        for(var i = 0; i < 40; i++){
+            tmat = [i/10, 0.0, -8.0];
+            engine.add_geo(geo.rectangle(0.05, 0.5), tmat);
+            // var geo2 = engine.add_geo([
+            //      1.0,  1.0,  0.0,
+            //     -1.0,  1.0,  0.0,
+            //      1.0, -1.0,  0.0,
+            //     -1.0, -1.0,  0.0
+            // ], tmat);
+        }
+
+
+        // window.setInterval(function(){
+        //     geo2.trans[0] += 0.1;
+        // }, 1000);
 
         // console.log(geo1.buffer.itemSize,geo2.buffer.itemSize);
 
