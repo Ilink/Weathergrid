@@ -309,7 +309,10 @@ $(document).ready(function(){
         ], tmat);
 
         for(var i = 0; i < 40; i++){
-            tmat = [i/10, 0.0, -8.0];
+            var z;
+            if(i%2 === 0) z = -10;
+            else z = -5;
+            tmat = [i/10, 1.0, z];
             engine.add_geo(geo.rectangle(0.05, 0.5), tmat);
             // var geo2 = engine.add_geo([
             //      1.0,  1.0,  0.0,
