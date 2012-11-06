@@ -28,7 +28,9 @@
 		float blue = abs( sin( position.y * position.y + time / 3.0 ) );
 
 		vec4 final_color;
-		final_color.rgba = vec4(1.0,0.0,0.0, 1.0);
+		// final_color.rgba = vec4(red, gree, blue, 1.0);
+		final_color.rgba = vec4(0.0, 0.3, 1.0, 1.0);
+
 		gl_FragColor = mix(fog_color, final_color, fogFactor );
 
 		// gl_FragColor = vec4( red, green, blue, 1.0 );

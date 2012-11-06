@@ -47,8 +47,8 @@ function Engine(canvas, shaders){
 
 
     function resize_viewport( canvas ) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = $(window).width()-4;
+        canvas.height = $(window).height()-4;
 
         parameters.screenWidth = canvas.width;
         parameters.screenHeight = canvas.height;
@@ -234,7 +234,7 @@ function Engine(canvas, shaders){
         
         // initBuffers(); // buffers are now added from "add_geo"
 
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clearColor(1.0, 1.0, 1.0, 1.0);
         gl.enable(gl.DEPTH_TEST);
 
         window.requestAnimationFrame(animate);
@@ -300,13 +300,13 @@ $(document).ready(function(){
             -1.0, -1.0,  0.0
         ], tmat);
 
-        tmat = [1.5, 0.0, -8.0];
-        var geo2 = engine.add_geo([
-             0.0,  0.0,  0.0,
-             0.2,  0.0,  0.0,
-             0.0,  1.0,  0.0,
-             0.2,  1.0,  0.0
-        ], tmat);
+        // tmat = [1.5, 0.0, -8.0];
+        // var geo2 = engine.add_geo([
+        //      0.0,  0.0,  0.0,
+        //      0.2,  0.0,  0.0,
+        //      0.0,  1.0,  0.0,
+        //      0.2,  1.0,  0.0
+        // ], tmat);
 
         for(var i = 0; i < 40; i++){
             var z;
