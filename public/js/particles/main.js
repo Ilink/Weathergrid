@@ -38,14 +38,6 @@ function Engine(canvas, shaders){
 
     var geometry = [];
 
-    // something like this:
-    // var geometry = [{
-    //     verts: [0,1..],
-    //     buffer: buffer,
-    //     shader: shader
-    // }];
-
-
     function resize_viewport( canvas ) {
         canvas.width = $(window).width()-4;
         canvas.height = $(window).height()-4;
@@ -143,33 +135,6 @@ function Engine(canvas, shaders){
         gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
     }
 
-    function initBuffers() {
-        triangleVertexPositionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-        var vertices = [
-             0.0,  1.0,  0.0,
-            -1.0, -1.0,  0.0,
-             1.0, -1.0,  0.0
-        ];
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        triangleVertexPositionBuffer.itemSize = 3;
-        triangleVertexPositionBuffer.numItems = 3;
-
-
-        vertices = [
-             1.0,  1.0,  0.0,
-            -1.0,  1.0,  0.0,
-             1.0, -1.0,  0.0,
-            -1.0, -1.0,  0.0
-        ];
-        squareVertexPositionBuffer = init_buffer(vertices);
-        // squareVertexPositionBuffer = gl.createBuffer();
-        // gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
-        // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        // squareVertexPositionBuffer.itemSize = 3;
-        // squareVertexPositionBuffer.numItems = 4;
-    }
-
     function init_buffer(verts){
         buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -210,13 +175,6 @@ function Engine(canvas, shaders){
         mat4.perspective(45, canvas.width / canvas.height, 0.1, 100.0, pMatrix);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         build();
-
-        // mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
-        // gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-        // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-        // setMatrixUniforms();
-        // gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
-
     }
 
     function insert_shaders(shaders){
@@ -232,8 +190,6 @@ function Engine(canvas, shaders){
             resize_viewport(canvas);
         });
         
-        // initBuffers(); // buffers are now added from "add_geo"
-
         gl.clearColor(1.0, 1.0, 1.0, 1.0);
         gl.enable(gl.DEPTH_TEST);
 
@@ -274,7 +230,7 @@ function Rain(){
     var tmat;
     
     for(var i = 0; i < 100; i++){
-        tmat = [i, 0.0, 0];
+        tmat = [-50+i, 0.0, 0];
         verts = geo.rectangle(0.05, 0.5);
         var _geo = engine.add_geo(geo.rectangle(0.05, 0.5), tmat);
         // _geo.velocity =
@@ -300,34 +256,39 @@ $(document).ready(function(){
             -1.0, -1.0,  0.0
         ], tmat);
 
-        // tmat = [1.5, 0.0, -8.0];
-        // var geo2 = engine.add_geo([
-        //      0.0,  0.0,  0.0,
-        //      0.2,  0.0,  0.0,
-        //      0.0,  1.0,  0.0,
-        //      0.2,  1.0,  0.0
-        // ], tmat);
+        /*
+        Give me a range from edge to edge of the screen
+        I am estimating the edge now, when my monitor is fullscreen
+        -4 < x < 4
 
-        for(var i = 0; i < 40; i++){
-            var z;
-            if(i%2 === 0) z = -10;
+        Also, 1.5 is the top of the screen, hooray
+        */
+        var max = 100;
+        var min = 0;
+        var top = 1.5;
+        var z;
+        var geo_arr = [];
+        for(var i = min; i < max; i++){
+            var x = fit_bound(i, min, max, -4, 4);
+           
+
+            if(Math.random() > 0.5) z = -10;
             else z = -5;
-            tmat = [i/10, 1.0, z];
-            engine.add_geo(geo.rectangle(0.05, 0.5), tmat);
-            // var geo2 = engine.add_geo([
-            //      1.0,  1.0,  0.0,
-            //     -1.0,  1.0,  0.0,
-            //      1.0, -1.0,  0.0,
-            //     -1.0, -1.0,  0.0
-            // ], tmat);
+            tmat = [x, 1.5, z];
+            var test = mat4.create();
+            var _geo = engine.add_geo(geo.rectangle(0.05, 0.5), tmat);
+            _geo.vel = Math.random()/2.0;
+            geo_arr.push(_geo);
         }
 
-
-        // window.setInterval(function(){
-        //     geo2.trans[0] += 0.1;
-        // }, 1000);
-
-        // console.log(geo1.buffer.itemSize,geo2.buffer.itemSize);
+        window.setInterval(function(){
+            for(var i = 0; i < geo_arr.length; i++){
+                if(geo_arr[i].trans[1] < -4){
+                    geo_arr[i].trans[1] = 1.5;
+                }
+                geo_arr[i].trans[1] -= geo_arr[i].vel;
+            }
+        }, 30);
 
         engine.start();
     });
