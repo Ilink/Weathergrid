@@ -154,9 +154,6 @@ function Engine(canvas, shaders){
             mat4.identity(mvMatrix);
             mat4.translate(mvMatrix, geo.trans);
 
-            if(i === 0) {
-                rotate(0.1, mvMatrix, parameters.time);
-            }
             setMatrixUniforms();
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
             gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -249,12 +246,12 @@ $(document).ready(function(){
         // var tmat = mat4.create();
         var tmat = [-1.5, 0.0, -7.0];
 
-        var geo1 = engine.add_geo([
-             1.0,  1.0,  0.0,
-            -1.0,  1.0,  0.0,
-             1.0, -1.0,  0.0,
-            -1.0, -1.0,  0.0
-        ], tmat);
+        // var geo1 = engine.add_geo([
+        //      1.0,  1.0,  0.0,
+        //     -1.0,  1.0,  0.0,
+        //      1.0, -1.0,  0.0,
+        //     -1.0, -1.0,  0.0
+        // ], tmat);
 
         /*
         Give me a range from edge to edge of the screen
@@ -263,21 +260,21 @@ $(document).ready(function(){
 
         Also, 1.5 is the top of the screen, hooray
         */
-        var max = 100;
-        var min = 0;
+        var x_max = 100;
+        var x_min = 0;
+        var z_min = -12;
+        var z_max = -5;
         var top = 1.5;
         var z;
         var geo_arr = [];
-        for(var i = min; i < max; i++){
-            var x = fit_bound(i, min, max, -4, 4);
-           
-
-            if(Math.random() > 0.5) z = -10;
-            else z = -5;
+        for(var i = x_min; i < x_max; i++){
+            var x = fit_bound(i, x_min, x_max, -4, 4);
+            var z_rand = Math.random();
+            z = fit_bound(z_rand, 0, 1, z_min, z_max);
             tmat = [x, 1.5, z];
             var test = mat4.create();
             var _geo = engine.add_geo(geo.rectangle(0.05, 0.5), tmat);
-            _geo.vel = Math.random()/2.0;
+            _geo.vel = Math.random()/3.0;
             geo_arr.push(_geo);
         }
 
@@ -285,7 +282,7 @@ $(document).ready(function(){
             for(var i = 0; i < geo_arr.length; i++){
                 if(geo_arr[i].trans[1] < -4){
                     geo_arr[i].trans[1] = 1.5;
-                }
+                } else
                 geo_arr[i].trans[1] -= geo_arr[i].vel;
             }
         }, 30);
