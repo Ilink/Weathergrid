@@ -1,16 +1,3 @@
-/**
- * Provides requestAnimationFrame in a cross browser way.
- * paulirish.com/2011/requestanimationframe-for-smart-animating/
- */
-window.requestAnimationFrame = window.requestAnimationFrame || ( function() {
-    return  window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function(  callback, element ) {
-                window.setTimeout( callback, 1000 / 60 );
-            };
-})();
 
 /*
 Engine
@@ -274,18 +261,20 @@ $(document).ready(function(){
             tmat = [x, 1.5, z];
             var test = mat4.create();
             var _geo = engine.add_geo(geo.rectangle(0.05, 0.5), tmat);
-            _geo.vel = Math.random()/3.0;
+            _geo.vel = Math.random()/150.0;
             geo_arr.push(_geo);
         }
 
-        window.setInterval(function(){
+        var timeline = new Timeline(function(dt){
+            console.log(dt);
             for(var i = 0; i < geo_arr.length; i++){
                 if(geo_arr[i].trans[1] < -4){
                     geo_arr[i].trans[1] = 1.5;
                 } else
-                geo_arr[i].trans[1] -= geo_arr[i].vel;
+                geo_arr[i].trans[1] -= geo_arr[i].vel * dt;
             }
-        }, 30);
+        });
+        timeline.start();
 
         engine.start();
     });
