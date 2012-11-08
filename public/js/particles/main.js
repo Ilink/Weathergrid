@@ -90,8 +90,8 @@ function Engine(canvas, shaders){
 
 
     function initShaders() {
-        var fragmentShader = getShader(gl, "fs");
-        var vertexShader = getShader(gl, "vs");
+        var fragmentShader = getShader(gl, "rain_fs");
+        var vertexShader = getShader(gl, "rain_vs");
 
         shaderProgram = gl.createProgram();
         gl.attachShader(shaderProgram, vertexShader);
@@ -225,7 +225,7 @@ function Rain(){
 
 $(document).ready(function(){
     var shader_loader = new Shader_loader();
-    shader_loader.load(['vs', 'fs']);
+    shader_loader.load(['rain_vs', 'rain_fs']);
 
     $(document).on('shaders_loaded', function(e, shaders){
         var engine = new Engine($('canvas'), shaders);
