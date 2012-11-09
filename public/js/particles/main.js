@@ -131,6 +131,45 @@ function Engine(canvas, shaders){
         return buffer;
     }
 
+    // Textures
+    function handleLoadedTexture(texture) {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+
+    function init_texture(texture_name){
+        var texture = gl.createTexture();
+        texture.image = new Image();
+        texture.image.onload = function() {
+            handleLoadedTexture(texture)
+        }
+
+        texture.image.src = texture_name;
+        return texture;
+    }
+
+    function get_texture_coords(){
+        return [
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0
+        ]
+    }
+
+    function init_texture_buffer(verts){
+        var texture_coord_buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, texture_coord_buffer);
+        texture_coord_buffer.itemSize = 3;
+        texture_coord_buffer.numItems = 4;
+        return texture_coord_buffer;
+    }
+    //////////////////////
+
     function animate(){
         render();
         requestAnimationFrame(animate);
@@ -144,6 +183,17 @@ function Engine(canvas, shaders){
             setMatrixUniforms();
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
             gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
+
+            // Textures
+            if(typeof geo.texture !== 'undefined'){
+                gl.bindBuffer(gl.ARRAY_BUFFER, geo.texture_buffer);
+                gl.vertexAttribPointer(shaderProgram.textureCoordAttribute,  geo.texture_buffer.itemSize, gl.FLOAT, false, 0, 0);
+
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, geo.texture);
+                gl.uniform1i(shaderProgram.samplerUniform, 0);
+            }
+
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });
     }
@@ -183,11 +233,15 @@ function Engine(canvas, shaders){
     insert_shaders(shaders);
     initGL(canvas);
 
-    this.add_geo = function(verts, mat){
+    this.add_geo = function(verts, mat, texture){
         var geo = {
             verts: verts,
             buffer: init_buffer(verts),
             trans: mat
+        }
+        if(typeof texture !== 'undefined'){
+            geo.texture = init_texture(texture);
+            geo.texture_buffer = init_texture_buffer(get_texture_coords());
         }
         geometry.push(geo);
         return geo;
@@ -233,12 +287,7 @@ $(document).ready(function(){
         // var tmat = mat4.create();
         var tmat = [-1.5, 0.0, -7.0];
 
-        // var geo1 = engine.add_geo([
-        //      1.0,  1.0,  0.0,
-        //     -1.0,  1.0,  0.0,
-        //      1.0, -1.0,  0.0,
-        //     -1.0, -1.0,  0.0
-        // ], tmat);
+        var texture_plane = engine.add_geo(geo.rectangle(0.5, 0.5), tmat, 'squid.png');
 
         /*
         Give me a range from edge to edge of the screen
@@ -266,7 +315,6 @@ $(document).ready(function(){
         }
 
         var timeline = new Timeline(function(dt){
-            console.log(dt);
             for(var i = 0; i < geo_arr.length; i++){
                 if(geo_arr[i].trans[1] < -4){
                     geo_arr[i].trans[1] = 1.5;
