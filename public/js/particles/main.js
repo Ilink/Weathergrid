@@ -87,11 +87,9 @@ function Engine(canvas, shaders){
         return shader;
     }
 
-
-
     function initShaders() {
-        var fragmentShader = getShader(gl, "rain_fs");
-        var vertexShader = getShader(gl, "rain_vs");
+        var fragmentShader = getShader(gl, "sprite_fs");
+        var vertexShader = getShader(gl, "sprite_vs");
 
         shaderProgram = gl.createProgram();
         gl.attachShader(shaderProgram, vertexShader);
@@ -111,6 +109,9 @@ function Engine(canvas, shaders){
         */
         shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "position");
         gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
+        textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+        gl.enableVertexAttribArray(textureCoordAttribute);
 
         shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
@@ -164,7 +165,8 @@ function Engine(canvas, shaders){
     function init_texture_buffer(verts){
         var texture_coord_buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, texture_coord_buffer);
-        texture_coord_buffer.itemSize = 3;
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+        texture_coord_buffer.itemSize = 2;
         texture_coord_buffer.numItems = 4;
         return texture_coord_buffer;
     }
@@ -279,7 +281,9 @@ function Rain(){
 
 $(document).ready(function(){
     var shader_loader = new Shader_loader();
-    shader_loader.load(['rain_vs', 'rain_fs']);
+    // shader_loader.load(['rain_vs', 'rain_fs']);
+    shader_loader.load(['sprite_vs', 'sprite_fs']);
+
 
     $(document).on('shaders_loaded', function(e, shaders){
         var engine = new Engine($('canvas'), shaders);
