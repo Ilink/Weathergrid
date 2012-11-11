@@ -11,9 +11,15 @@ $(document).ready(function(){
             vs: shaders['sprite_vs.glsl'].text(),
             fs: shaders['sprite_fs.glsl'].text()
         };
+        var rain_shaders = {
+            vs: shaders['rain_vs.glsl'].text(),
+            fs: shaders['rain_fs.glsl'].text()
+        }
         var gl = engine.get_gl();
         
         var squid_renderer = new Renderer(gl, squid_shaders);
+        // var squid_renderer = new Renderer(gl, rain_shaders);
+
         engine.add_renderer(squid_renderer);
 
         // var tmat = mat4.create();
@@ -21,11 +27,9 @@ $(document).ready(function(){
 
         var squid_sprite = squid_renderer.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid.png');
 
-        var rain_shaders = {
-            vs: shaders['rain_vs.glsl'].text(),
-            fs: shaders['rain_fs.glsl'].text()
-        }
+        
         var rain_renderer = new Renderer(gl, rain_shaders);
+        engine.add_renderer(rain_renderer);
 
         /*
         Give me a range from edge to edge of the screen
@@ -59,7 +63,7 @@ $(document).ready(function(){
                 geo_arr[i].trans[1] -= geo_arr[i].vel * dt;
             }
         });
-        // timeline.start();
+        timeline.start();
 
         engine.start();
     });

@@ -52,8 +52,6 @@ function Renderer(gl, shaders, textures){
             console.log("Could not initialise shaders");
         }
 
-        gl.useProgram(shaderProgram);
-
         shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "position");
         gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
@@ -110,7 +108,6 @@ function Renderer(gl, shaders, textures){
     this.render = function(time, dim) {
         parameters.time = new Date().getTime() - parameters.start_time;
 
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), time / 1000 );
         gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), dim.width, dim.height );
 
@@ -138,5 +135,9 @@ function Renderer(gl, shaders, textures){
         geometry.push(geo);
         return geo;
     };
+
+    this.get_program = function(){
+        return shaderProgram;
+    }
 
 }

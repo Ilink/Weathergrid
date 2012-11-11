@@ -26,8 +26,8 @@ function Engine(canvas){
 
     function initGL(canvas) {
         try {
-        	gl = WebGLDebugUtils.makeDebugContext(canvas.getContext("experimental-webgl"));
-            // gl = canvas.getContext("experimental-webgl");
+        	// gl = WebGLDebugUtils.makeDebugContext(canvas.getContext("experimental-webgl"));
+            gl = canvas.getContext("experimental-webgl");
         } catch (e) {
         }
         if (!gl) {
@@ -238,12 +238,15 @@ function Engine(canvas){
 
     var timeline = new Timeline(function(){
     	$.each(renderers, function(i, renderer){
+            var current_program = renderer.get_program();
+            gl.useProgram(current_program);
     		renderer.render(parameters.time, {width: screenWidth, height: screenHeight});
     	});
     });
 
     this.start = function(){
         // webGLStart();
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         timeline.start();
     };
 
