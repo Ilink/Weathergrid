@@ -10,23 +10,7 @@ $(document).ready(function(){
         // var tmat = mat4.create();
         var tmat = [-1.5, 0.0, -7.0];
 
-        var test_rect = [
-            -1.0, -1.0,  0.0,
-            1.0, -1.0,  0.0,
-            1.0,  1.0,  0.0,
-            -1.0,  1.0,  0.0,
-        ]
-
-        var test_rect = [
-            -1.0, -1.0,  0.0,
-            1.0, -1.0,  0.0,
-            1.0,  1.0,  0.0,
-            -1.0,  1.0,  0.0,
-        ]
-
-        var texture_plane = engine.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid.png');
-        // var texture_plane = engine.add_geo(test_rect, tmat, 'squid.png');
-
+        var squid_sprite = engine.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid.png');
 
         /*
         Give me a range from edge to edge of the screen
@@ -47,7 +31,6 @@ $(document).ready(function(){
             var z_rand = Math.random();
             z = fit_bound(z_rand, 0, 1, z_min, z_max);
             tmat = [x, 1.5, z];
-            var test = mat4.create();
             var _geo = engine.add_geo(geo_builder.rectangle(0.05, 0.5), tmat);
             _geo.vel = Math.random()/150.0;
             geo_arr.push(_geo);

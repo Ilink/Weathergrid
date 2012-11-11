@@ -1,6 +1,7 @@
 /*
 Shader Loader
 Loads shader files via AJAX.
+Also inserts them into the DOM automatically.
 */
 
 function Shader_loader(){
@@ -21,8 +22,15 @@ function Shader_loader(){
 		rec++;
 		console.log('collect', name, rec);
 		if(rec === total){
+			insert_shaders(results);
 			$(document).trigger('shaders_loaded', results);
 		}
+	}
+
+	function insert_shaders(shaders){
+	    $.each(shaders, function(i, shader){
+	        $('body').prepend(shader);
+	    });
 	}
 
 	this.load = function(name){

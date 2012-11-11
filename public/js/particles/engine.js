@@ -4,11 +4,10 @@ function Engine(canvas, shaders){
                         time        : 0, 
                         screenWidth : 0, 
                         screenHeight: 0 };
+    var screenHeight, screenWidth;
     var shaderProgram;
     var mvMatrix = mat4.create();
     var pMatrix = mat4.create();
-    var triangleVertexPositionBuffer;
-    var squareVertexPositionBuffer;
     var gl;
     canvas = canvas[0];
 
@@ -18,14 +17,10 @@ function Engine(canvas, shaders){
         canvas.width = $(window).width()-4;
         canvas.height = $(window).height()-4;
 
-        parameters.screenWidth = canvas.width;
-        parameters.screenHeight = canvas.height;
+        screenWidth = canvas.width;
+        screenHeight = canvas.height;
 
         gl.viewport( 0, 0, canvas.width, canvas.height );
-    }
-
-    function rotate(deg, matrix, time){
-        mat4.rotate(matrix, (time + deg) / 1000, [0, 0, 1]);
     }
 
     function initGL(canvas) {
@@ -37,7 +32,6 @@ function Engine(canvas, shaders){
             console.log("Could not initialise WebGL, sorry :-(");
         }
     }
-
 
     function getShader(gl, id) {
         var shaderScript = document.getElementById(id);
@@ -199,17 +193,11 @@ function Engine(canvas, shaders){
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), parameters.time / 1000 );
-        gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), parameters.screenWidth, parameters.screenHeight );
+        gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), screenWidth, screenHeight );
 
         mat4.perspective(45, (canvas.width) / canvas.height, 0.1, 100.0, pMatrix);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         build();
-    }
-
-    function insert_shaders(shaders){
-        $.each(shaders, function(i, shader){
-            $('body').prepend(shader);
-        });
     }
 
     function webGLStart() {        
@@ -225,8 +213,7 @@ function Engine(canvas, shaders){
         window.requestAnimationFrame(animate);
     }
 
-    insert_shaders(shaders);
-    initGL(canvas);
+    initGL(canvas); // get context
 
     this.add_geo = function(verts, mat, texture){
         var geo = {
