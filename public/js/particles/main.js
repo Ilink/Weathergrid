@@ -1,16 +1,24 @@
 $(document).ready(function(){
     var shader_loader = new Shader_loader();
     // shader_loader.load(['rain_vs', 'rain_fs']);
-    shader_loader.load(['sprite_vs', 'sprite_fs']);
+    shader_loader.load(['sprite_vs', 'sprite_fs', 'rain_vs', 'rain_fs']);
 
 
     $(document).on('shaders_loaded', function(e, shaders){
-        var engine = new Engine($('canvas'), shaders);
+        var engine = new Engine($('canvas'));
+
+        var squid_shaders = {
+            vs: shaders['sprite_vs.glsl'].text(),
+            fs: shaders['sprite_fs.glsl'].text()
+        };
+        var gl = engine.get_gl();
+        
+        var renderer = new Renderer(gl, squid_shaders);
 
         // var tmat = mat4.create();
         var tmat = [-1.5, 0.0, -7.0];
 
-        var squid_sprite = engine.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid.png');
+        var squid_sprite = renderer.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid.png');
 
         /*
         Give me a range from edge to edge of the screen
@@ -31,7 +39,7 @@ $(document).ready(function(){
             var z_rand = Math.random();
             z = fit_bound(z_rand, 0, 1, z_min, z_max);
             tmat = [x, 1.5, z];
-            var _geo = engine.add_geo(geo_builder.rectangle(0.05, 0.5), tmat);
+            var _geo = renderer.add_geo(geo_builder.rectangle(0.05, 0.5), tmat);
             _geo.vel = Math.random()/150.0;
             geo_arr.push(_geo);
         }

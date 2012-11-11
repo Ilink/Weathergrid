@@ -19,27 +19,15 @@ function Renderer(gl, shaders, textures){
         gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
     }
 
-    function setup_shader(shader_element){
-        var str = "";
-        var k = shader_element.firstChild;
-        while (k) {
-            if (k.nodeType == 3) {
-                str += k.textContent;
-            }
-            k = k.nextSibling;
-        }
-
+    function get_shader(shader_src, type){
         var shader;
-        console.log(shaderScript.type);
-        if (shaderScript.type == "x-shader/fragment") {
+        if(type === 'fs'){
             shader = gl.createShader(gl.FRAGMENT_SHADER);
-        } else if (shaderScript.type == "x-shader/vertex") {
+        } else if(type === 'vs'){
             shader = gl.createShader(gl.VERTEX_SHADER);
-        } else {
-            return null;
-        }
+        } else return null;
 
-        gl.shaderSource(shader, str);
+        gl.shaderSource(shader, shader_src);
         gl.compileShader(shader);
 
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -52,8 +40,8 @@ function Renderer(gl, shaders, textures){
 
     // Link shaders and set uniforms / attributes
     function setup_shaders() {
-        var fragmentShader = get_shader(gl, shaders.fs);
-        var vertexShader = get_shader(gl, shaders.vs);
+        var fragmentShader = get_shader(shaders.fs, 'fs');
+        var vertexShader = get_shader(shaders.vs, 'vs');
 
         shaderProgram = gl.createProgram();
         gl.attachShader(shaderProgram, vertexShader);
@@ -137,9 +125,15 @@ function Renderer(gl, shaders, textures){
             buffer: init_buffer(verts),
             trans: mat
         }
+        var texture_coords = [
+            0.0, 0.0,
+            0.0, 1.0,
+            1.0, 0.0,
+            1.0, 1.0
+        ];
         if(typeof texture !== 'undefined'){
-            geo.texture = init_texture(texture);
-            geo.texture_buffer = init_texture_buffer(get_texture_coords());
+            geo.texture = texture_builder.init(texture);
+            geo.texture_buffer = texture_builder.init_buffer(texture_coords);
         }
         geometry.push(geo);
         return geo;

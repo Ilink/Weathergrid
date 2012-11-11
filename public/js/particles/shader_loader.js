@@ -18,12 +18,15 @@ function Shader_loader(){
 	}
 
 	function collect(name, data){
-		results[name] = data;
+		// results[name] = data;
+		var $data = $(data);
+		$('body').prepend($data);
+		results[name] = $data;
+		// console.log($data.text());
 		rec++;
-		console.log('collect', name, rec);
 		if(rec === total){
-			insert_shaders(results);
-			$(document).trigger('shaders_loaded', results);
+			// insert_shaders(results);
+			$(document).trigger('shaders_loaded', results);			
 		}
 	}
 

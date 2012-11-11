@@ -1,4 +1,4 @@
-function Engine(canvas, shaders){
+function Engine(canvas){
 
     var parameters = {  start_time  : new Date().getTime(), 
                         time        : 0, 
@@ -8,10 +8,11 @@ function Engine(canvas, shaders){
     var shaderProgram;
     var mvMatrix = mat4.create();
     var pMatrix = mat4.create();
+    var geometry = [];
+    var renderers = [];
     var gl;
     canvas = canvas[0];
 
-    var geometry = [];
 
     function resize_viewport( canvas ) {
         canvas.width = $(window).width()-4;
@@ -215,21 +216,41 @@ function Engine(canvas, shaders){
 
     initGL(canvas); // get context
 
-    this.add_geo = function(verts, mat, texture){
-        var geo = {
-            verts: verts,
-            buffer: init_buffer(verts),
-            trans: mat
-        }
-        if(typeof texture !== 'undefined'){
-            geo.texture = init_texture(texture);
-            geo.texture_buffer = init_texture_buffer(get_texture_coords());
-        }
-        geometry.push(geo);
-        return geo;
-    };
+    resize_viewport(canvas);
+    $(window).on('resize', function(){
+        resize_viewport(canvas);
+    });
+
+    // this.add_geo = function(verts, mat, texture){
+    //     var geo = {
+    //         verts: verts,
+    //         buffer: init_buffer(verts),
+    //         trans: mat
+    //     }
+    //     if(typeof texture !== 'undefined'){
+    //         geo.texture = init_texture(texture);
+    //         geo.texture_buffer = init_texture_buffer(get_texture_coords());
+    //     }
+    //     geometry.push(geo);
+    //     return geo;
+    // };
+
+    var timeline = new Timeline(function(){
+    	$.each(renderers, function(i, renderer){
+    		renderer.render();
+    	});
+    });
 
     this.start = function(){
-        webGLStart();
+        // webGLStart();
+        timeline.start();
     };
+
+    this.add_renderer = function(renderer){
+    	renderers.push(renderer);
+    }
+
+    this.get_gl = function(){
+    	return gl;
+    }
 }
