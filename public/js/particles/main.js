@@ -115,6 +115,8 @@ function Engine(canvas, shaders){
 
         shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+        shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+
     }
 
 
@@ -157,8 +159,8 @@ function Engine(canvas, shaders){
         return [
             0.0, 0.0,
             1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0
+            0.0, 1.0,
+            1.0, 1.0
         ]
     }
 
@@ -183,8 +185,6 @@ function Engine(canvas, shaders){
             mat4.translate(mvMatrix, geo.trans);
 
             setMatrixUniforms();
-            gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
-            gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
 
             // Textures
             if(typeof geo.texture !== 'undefined'){
@@ -195,6 +195,10 @@ function Engine(canvas, shaders){
                 gl.bindTexture(gl.TEXTURE_2D, geo.texture);
                 gl.uniform1i(shaderProgram.samplerUniform, 0);
             }
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
+            gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0); 
+
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });
@@ -208,7 +212,7 @@ function Engine(canvas, shaders){
         gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), parameters.time / 1000 );
         gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), parameters.screenWidth, parameters.screenHeight );
 
-        mat4.perspective(45, canvas.width / canvas.height, 0.1, 100.0, pMatrix);
+        mat4.perspective(45, (canvas.width) / canvas.height, 0.1, 100.0, pMatrix);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         build();
     }
@@ -256,12 +260,21 @@ function Engine(canvas, shaders){
 
 var geo = {
     rectangle: function(width, height){
+
         return [
             0.0,    0.0,        0.0,
-            width,  0.0,        0.0,
-            0.0,    height,     0.0,
+            0.0,  height,        0.0,
+            width,    0.0,     0.0,
             width,  height,     0.0
         ];
+
+        // return [
+        //     0.0,   height,        0.0,
+        //     0.0,  0.0,        0.0,
+        //     width,    height,     0.0,
+        //     width,  0.0,     0.0
+        // ];
+
     }
 }
 
@@ -291,7 +304,23 @@ $(document).ready(function(){
         // var tmat = mat4.create();
         var tmat = [-1.5, 0.0, -7.0];
 
-        var texture_plane = engine.add_geo(geo.rectangle(0.5, 0.5), tmat, 'squid.png');
+        var test_rect = [
+            -1.0, -1.0,  0.0,
+            1.0, -1.0,  0.0,
+            1.0,  1.0,  0.0,
+            -1.0,  1.0,  0.0,
+        ]
+
+        var test_rect = [
+            -1.0, -1.0,  0.0,
+            1.0, -1.0,  0.0,
+            1.0,  1.0,  0.0,
+            -1.0,  1.0,  0.0,
+        ]
+
+        var texture_plane = engine.add_geo(geo.rectangle(1.0, 1.0), tmat, 'squid.png');
+        // var texture_plane = engine.add_geo(test_rect, tmat, 'squid.png');
+
 
         /*
         Give me a range from edge to edge of the screen
@@ -300,33 +329,33 @@ $(document).ready(function(){
 
         Also, 1.5 is the top of the screen, hooray
         */
-        var x_max = 100;
-        var x_min = 0;
-        var z_min = -12;
-        var z_max = -5;
-        var top = 1.5;
-        var z;
-        var geo_arr = [];
-        for(var i = x_min; i < x_max; i++){
-            var x = fit_bound(i, x_min, x_max, -4, 4);
-            var z_rand = Math.random();
-            z = fit_bound(z_rand, 0, 1, z_min, z_max);
-            tmat = [x, 1.5, z];
-            var test = mat4.create();
-            var _geo = engine.add_geo(geo.rectangle(0.05, 0.5), tmat);
-            _geo.vel = Math.random()/150.0;
-            geo_arr.push(_geo);
-        }
+        // var x_max = 100;
+        // var x_min = 0;
+        // var z_min = -12;
+        // var z_max = -5;
+        // var top = 1.5;
+        // var z;
+        // var geo_arr = [];
+        // for(var i = x_min; i < x_max; i++){
+        //     var x = fit_bound(i, x_min, x_max, -4, 4);
+        //     var z_rand = Math.random();
+        //     z = fit_bound(z_rand, 0, 1, z_min, z_max);
+        //     tmat = [x, 1.5, z];
+        //     var test = mat4.create();
+        //     var _geo = engine.add_geo(geo.rectangle(0.05, 0.5), tmat);
+        //     _geo.vel = Math.random()/150.0;
+        //     geo_arr.push(_geo);
+        // }
 
-        var timeline = new Timeline(function(dt){
-            for(var i = 0; i < geo_arr.length; i++){
-                if(geo_arr[i].trans[1] < -4){
-                    geo_arr[i].trans[1] = 1.5;
-                } else
-                geo_arr[i].trans[1] -= geo_arr[i].vel * dt;
-            }
-        });
-        timeline.start();
+        // var timeline = new Timeline(function(dt){
+        //     for(var i = 0; i < geo_arr.length; i++){
+        //         if(geo_arr[i].trans[1] < -4){
+        //             geo_arr[i].trans[1] = 1.5;
+        //         } else
+        //         geo_arr[i].trans[1] -= geo_arr[i].vel * dt;
+        //     }
+        // });
+        // timeline.start();
 
         engine.start();
     });
