@@ -13,12 +13,19 @@ $(document).ready(function(){
         };
         var gl = engine.get_gl();
         
-        var renderer = new Renderer(gl, squid_shaders);
+        var squid_renderer = new Renderer(gl, squid_shaders);
+        engine.add_renderer(squid_renderer);
 
         // var tmat = mat4.create();
         var tmat = [-1.5, 0.0, -7.0];
 
-        var squid_sprite = renderer.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid.png');
+        var squid_sprite = squid_renderer.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid.png');
+
+        var rain_shaders = {
+            vs: shaders['rain_vs.glsl'].text(),
+            fs: shaders['rain_fs.glsl'].text()
+        }
+        var rain_renderer = new Renderer(gl, rain_shaders);
 
         /*
         Give me a range from edge to edge of the screen
@@ -39,7 +46,7 @@ $(document).ready(function(){
             var z_rand = Math.random();
             z = fit_bound(z_rand, 0, 1, z_min, z_max);
             tmat = [x, 1.5, z];
-            var _geo = renderer.add_geo(geo_builder.rectangle(0.05, 0.5), tmat);
+            var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.05, 0.5), tmat);
             _geo.vel = Math.random()/150.0;
             geo_arr.push(_geo);
         }

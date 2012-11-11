@@ -107,14 +107,14 @@ function Renderer(gl, shaders, textures){
 
     setup_shaders();
 
-    this.render = function() {
+    this.render = function(time, dim) {
         parameters.time = new Date().getTime() - parameters.start_time;
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), parameters.time / 1000 );
-        gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), screenWidth, screenHeight );
+        gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), time / 1000 );
+        gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), dim.width, dim.height );
 
-        mat4.perspective(45, (canvas.width) / canvas.height, 0.1, 100.0, pMatrix);
+        mat4.perspective(45, (dim.width) / dim.height, 0.1, 100.0, pMatrix);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         build();
     }
