@@ -1,6 +1,9 @@
 /*
 Renderer
 Takes an open gl context
+
+This COULD actually have more use from the Engine to handle the transform and perspective
+matrices. 
 */
 
 function Renderer(gl, shaders, textures){
@@ -10,11 +13,14 @@ function Renderer(gl, shaders, textures){
     };
     var shaderProgram;
     var mvMatrix = mat4.create();
-    var pMatrix = mat4.create();
+    // var pMatrix = mat4.create();
+    var pMatrix;
     var texture_builder = new Texture_builder(gl);
     var geometry = [];
+    var pMatrixInv;
 
     function setMatrixUniforms() {
+        // console.log(pMatrix);
         gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
         gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
     }
@@ -73,14 +79,9 @@ function Renderer(gl, shaders, textures){
         return buffer;
     }
 
-    function animate(){
-        render();
-        requestAnimationFrame(animate);
-    }
-
     function build(){
         $.each(geometry, function(i, geo){
-            mat4.identity(mvMatrix);
+            mat4.identity(mvMatrix); // reset the position for each piece of geometry
             mat4.translate(mvMatrix, geo.trans);
 
             setMatrixUniforms();
@@ -105,16 +106,17 @@ function Renderer(gl, shaders, textures){
 
     setup_shaders();
 
-    this.render = function(time, dim) {
+    this.render = function(time, dim, perspective, perspectiveInv) {
         parameters.time = new Date().getTime() - parameters.start_time;
 
         gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), time / 1000 );
         gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), dim.width, dim.height );
 
-        mat4.perspective(45, (dim.width) / dim.height, 0.1, 100.0, pMatrix);
+        pMatrix = perspective;
+        pMatrixInv = perspectiveInv;
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         build();
-    }
+    };
 
     this.add_geo = function(verts, mat, texture){
         var geo = {
@@ -138,6 +140,6 @@ function Renderer(gl, shaders, textures){
 
     this.get_program = function(){
         return shaderProgram;
-    }
+    };
 
 }

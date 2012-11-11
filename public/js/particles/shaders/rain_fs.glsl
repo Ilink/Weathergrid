@@ -35,9 +35,6 @@
 		final_color.rgba = vec4(0.0, 0.3, 1.0, 1.0);
 
 		gl_FragColor = mix(fog_color, final_color, fogFactor );
-
-		// gl_FragColor = vec4( red, green, blue, 1.0 );
-		// gl_FragColor = vec4( red, green, blue, gl_FragCoord.z/2.0 );
 	}
 
 </script>
