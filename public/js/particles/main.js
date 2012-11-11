@@ -23,8 +23,7 @@ $(document).ready(function(){
         engine.add_renderer(squid_renderer);
 
         // var tmat = mat4.create();
-        var tmat = [-1.5, 0.0, -7.0];
-
+        var tmat = [-1.5, -2.0, -7.0];
         var squid_sprite = squid_renderer.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid.png');
 
         
