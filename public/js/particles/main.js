@@ -60,9 +60,9 @@ $(document).ready(function(){
             var x = fit_bound(i, x_min, x_max, -4, 4);
             var z_rand = Math.random();
             z = fit_bound(z_rand, 0, 1, z_min, z_max);
-
-            tmat = [-1.331599235534668, 0.41421353816986084, -1];
-            // tmat = [x, 1.5, z];
+            
+            tmat = [x, 1.5, z];
+            tmat = [-0.7966808676719666, 0.41421353816986084, z];
             var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.05, 0.5), tmat);
             _geo.vel = Math.random()/150.0;
             geo_arr.push(_geo);

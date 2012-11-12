@@ -28,10 +28,10 @@ function Engine(canvas){
     }
 
     function calc_position(){
-        var topleft = [-1,1,0]; // clip space 
+        var topleft = [-1,1,-1]; // clip space 
         var result = vec3.create();
         mat4.multiplyVec3(pMatrixInv, topleft);
-        var botright = [1, -1, 0, 1];
+        var botright = [1, -1, -1, 1];
         var mvMatrix = mat4.create([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,0, -4, -2.62300181388855,-7.774437427520752,1]);
         var mvMatrixInv = mat4.create();
         mat4.inverse(mvMatrix, mvMatrixInv);
