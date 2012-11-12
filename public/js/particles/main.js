@@ -51,41 +51,45 @@ $(document).ready(function(){
         */
         var x_max = 100;
         var x_min = 0;
-        var z_min = -12;
-        var z_max = -5;
+        var z_min = -5.0;
+        var z_max = -1;
         var top = 1.5;
         var z;
         var geo_arr = [];
-        // for(var i = x_min; i < x_max; i++){
-        //     var x = fit_bound(i, x_min, x_max, -4, 4);
-        //     var z_rand = Math.random();
-        //     z = fit_bound(z_rand, 0, 1, z_min, z_max);
+
+        // If the user resizes their screen, the rain wont move beacause this is only calculated once
+        var boundaries = engine.get_boundaries();
+        for(var i = x_min; i < x_max; i++){
+            var x = fit_bound(i, x_min, x_max, -4, 4);
+            var z_rand = Math.random();
+            z = fit_bound(z_rand, 0, 1, z_min, z_max);
             
-        //     tmat = [x, 1.5, z];
-        //     var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.05, 0.5), tmat);
-        //     _geo.vel = Math.random()/150.0;
-        //     geo_arr.push(_geo);
-        // }
+            tmat = [x, boundaries.topleft[1], z];
+            var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.05, 0.09), tmat);
+            _geo.vel = Math.random()/150.0 + 0.0001;
+            geo_arr.push(_geo);
+        }
 
         // Test Geo
         var boundaries = engine.get_boundaries();
         tmat = boundaries.botright;
         console.log(boundaries);
         // tmat[0] *= -1;
-        tmat[2] = -1.01;
+        tmat[2] = -1;
         var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.05, 0.05), tmat);
         _geo.vel = 1;
         geo_arr.push(_geo);
+        ////
 
-        // var timeline = new Timeline(function(dt){
-        //     for(var i = 0; i < geo_arr.length; i++){
-        //         if(geo_arr[i].trans[1] < -4){
-        //             geo_arr[i].trans[1] = 1.5;
-        //         } else
-        //         geo_arr[i].trans[1] -= geo_arr[i].vel * dt;
-        //     }
-        // });
-        // timeline.start();
+        var timeline = new Timeline(function(dt){
+            for(var i = 0; i < geo_arr.length; i++){
+                if(geo_arr[i].trans[1] < -4){
+                    geo_arr[i].trans[1] = boundaries.topleft[1]+1;
+                } else
+                geo_arr[i].trans[1] -= geo_arr[i].vel * dt;
+            }
+        });
+        timeline.start();
 
         engine.start();
     });
