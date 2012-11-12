@@ -9,7 +9,7 @@
 	void main( void ) {
 
 		// Fog
-		const float LOG2 = 10.442695;
+		const float LOG2 = 20.442695;
 		// Is the W coord related to the transform part?
 		float z = gl_FragCoord.z / gl_FragCoord.w;
 
