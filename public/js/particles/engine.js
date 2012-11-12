@@ -20,32 +20,24 @@ function Engine(canvas){
     var geometry = [];
     var renderers = [];
     var position;
+    var boundaries = {};
     var gl;
+    var topleft = [-1,1,-1,1]; // clip space
+    var botright = [1,-1,-1,1]; // clip space
+    var boundaries;
     canvas = canvas[0];
 
     function to_clip_space(){
-
+        // implement me!
     }
 
     function calc_position(){
-        var topleft = [-1,1,-1]; // clip space 
         var result = vec3.create();
-        mat4.multiplyVec3(pMatrixInv, topleft);
-        var botright = [1, -1, -1, 1];
-        var mvMatrix = mat4.create([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1,0, -4, -2.62300181388855,-7.774437427520752,1]);
-        var mvMatrixInv = mat4.create();
-        mat4.inverse(mvMatrix, mvMatrixInv);
+        mat4.multiplyVec3(pMatrixInv, topleft, result);
+        boundaries.topleft = result;
 
-        mat4.multiply(pMatrixInv, botright, result);
-        // mat4.multiply(pMatrixInv, mvMatrixInv, result);
-        // mat4.multiply(result, botright, result);
-        console.log(topleft, result);
-
-        // return {
-        //     tl: {
-        //         x: pMatrixInv * 
-        //     }
-        // }
+        mat4.multiplyVec3(pMatrixInv, botright, result);
+        boundaries.botright = result;
     }
 
     function resize_viewport( canvas ) {
@@ -104,4 +96,8 @@ function Engine(canvas){
     this.get_gl = function(){
     	return gl;
     };
+
+    this.get_boundaries = function(){
+        return boundaries;
+    }
 }
