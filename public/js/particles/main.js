@@ -69,9 +69,11 @@ $(document).ready(function(){
 
         // Test Geo
         var boundaries = engine.get_boundaries();
-        tmat = boundaries.topleft;
-        tmat[2] = -1.05;
-        var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.05, 0.5), tmat);
+        tmat = boundaries.botright;
+        console.log(boundaries);
+        // tmat[0] *= -1;
+        tmat[2] = -1.01;
+        var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.05, 0.05), tmat);
         _geo.vel = 1;
         geo_arr.push(_geo);
 

@@ -31,11 +31,12 @@ function Engine(canvas){
         // implement me!
     }
 
-    function calc_position(){
+    function calc_boundaries(){
         var result = vec3.create();
         mat4.multiplyVec3(pMatrixInv, topleft, result);
         boundaries.topleft = result;
-
+        
+        result = vec3.create();
         mat4.multiplyVec3(pMatrixInv, botright, result);
         boundaries.botright = result;
     }
@@ -50,7 +51,7 @@ function Engine(canvas){
         gl.viewport( 0, 0, canvas.width, canvas.height );
         mat4.perspective(45, (canvas.width) / canvas.height, 0.1, 100.0, pMatrix);
         mat4.inverse(pMatrix, pMatrixInv);
-        calc_position();
+        calc_boundaries();
     }
 
     function initGL(canvas) {
