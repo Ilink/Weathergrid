@@ -2,8 +2,8 @@
 	attribute vec3 position;
 	attribute vec2 aTextureCoord;
 
-	uniform mat4 uMVMatrix;
-	uniform mat4 uPMatrix;
+	uniform mat4 uMVMatrix; // combined modelview projection matrix
+	uniform mat4 uPMatrix; // project
 
 	varying vec2 vTextureCoord;
 

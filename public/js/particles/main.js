@@ -1,4 +1,16 @@
 $(document).ready(function(){
+
+    // Matrix multiplcation test
+    var persp = mat4.create();
+    mat4.perspective(45, $('canvas').width() / $('canvas').height(), 0.1, 100.0, persp);
+    var test_pos = [1,2,3,1];
+    var result = vec4.create();
+    // mat4.multiplyVec3(persp,test_pos, result);
+    mat4.multiply(persp,test_pos, result);
+
+    console.log(result);
+
+
     var shader_loader = new Shader_loader();
     // shader_loader.load(['rain_vs', 'rain_fs']);
     shader_loader.load(['sprite_vs', 'sprite_fs', 'rain_vs', 'rain_fs']);
@@ -48,7 +60,9 @@ $(document).ready(function(){
             var x = fit_bound(i, x_min, x_max, -4, 4);
             var z_rand = Math.random();
             z = fit_bound(z_rand, 0, 1, z_min, z_max);
-            tmat = [x, 1.5, z];
+
+            tmat = [-1.331599235534668, 0.41421353816986084, -1];
+            // tmat = [x, 1.5, z];
             var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.05, 0.5), tmat);
             _geo.vel = Math.random()/150.0;
             geo_arr.push(_geo);
