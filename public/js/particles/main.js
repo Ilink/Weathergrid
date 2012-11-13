@@ -57,7 +57,7 @@ $(document).ready(function(){
 
         // var tmat = mat4.create();
         var tmat = [-1.5, -2.0, -7.0];
-        var squid_sprite = squid_renderer.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid.png');
+        var squid_sprite = squid_renderer.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid_large.png');
 
         
         var rain_renderer = new Renderer(gl, rain_shaders);
