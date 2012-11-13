@@ -33,19 +33,20 @@ $(document).ready(function(){
         }
         var gl = engine.get_gl();
         var boundaries = engine.get_boundaries();
-        
+        var boundaries_far = engine.get_boundaries(-10);
+
+
 
         var background_renderer = new Renderer(gl, background_shaders);
-        var width = boundaries.botright[0];
-        var height = boundaries.topleft[1];
+
+        // The shader for this does not use the perpsective matrix, so we just need clip space coords
         var background_rect = [
-            -1*height,    -1*width,        0.0, // bot left
-            height,    -1*width,     0.0, // top left
-            -1*height,  width,        0.0, // bot right
-            height,  width,     0.0  // top right
+            -1,   -1,        0.0, // bot left
+            -1,    1,     0.0, // top left
+            1,  -1,        0.0, // bot right
+            1,  1,     0.0  // top right
         ];
-        multiply_elements(background_rect, 50);
-        background_renderer.add_geo(background_rect, [0,0,-10]);
+        background_renderer.add_geo(background_rect, [0,0,-40]);
         engine.add_renderer(background_renderer);
 
         

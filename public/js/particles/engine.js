@@ -31,16 +31,6 @@ function Engine(canvas){
         // implement me!
     }
 
-    function calc_boundaries(){
-        var result = vec3.create();
-        mat4.multiplyVec3(pMatrixInv, topleft, result);
-        boundaries.topleft = result;
-        
-        result = vec3.create();
-        mat4.multiplyVec3(pMatrixInv, botright, result);
-        boundaries.botright = result;
-    }
-
     function resize_viewport( canvas ) {
         canvas.width = $(window).width()-4;
         canvas.height = $(window).height()-4;
@@ -51,7 +41,6 @@ function Engine(canvas){
         gl.viewport( 0, 0, canvas.width, canvas.height );
         mat4.perspective(45, (canvas.width) / canvas.height, 0.1, 100.0, pMatrix);
         mat4.inverse(pMatrix, pMatrixInv);
-        calc_boundaries();
     }
 
     function initGL(canvas) {
@@ -98,7 +87,34 @@ function Engine(canvas){
     	return gl;
     };
 
-    this.get_boundaries = function(){
+    this.get_boundaries = function(z){
+        if(typeof z !== 'undefined'){
+            // this is all wrong! dont bother
+            var tmat = mat4.create();
+            mat4.identity(tmat);
+            mat4.translate(tmat, [0,0,z], tmat);
+            var trans_result = mat4.create();
+            mat4.multiply(pMatrixInv, tmat, trans_result);
+
+            var result = vec4.create();
+            mat4.multiply(trans_result, topleft, result);
+            boundaries.topleft = result;
+            
+            // result = vec3.create();
+            // mat4.multiplyVec3(trans_result, botright, result);
+            // boundaries.botright = result;
+            console.log(tmat, trans_result, result);
+
+        } else {
+            var result = vec3.create();
+            mat4.multiplyVec3(pMatrixInv, topleft, result);
+            boundaries.topleft = result;
+            
+            result = vec3.create();
+            mat4.multiplyVec3(pMatrixInv, botright, result);
+            boundaries.botright = result;
+        }
+        
         return boundaries;
     }
 }
