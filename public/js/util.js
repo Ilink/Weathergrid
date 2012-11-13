@@ -139,3 +139,9 @@ function get_compliment(color){
 function parse_coords(coords){
 	return coords = coords.latitude + "," + coords.longitude;
 }
+
+function multiply_elements(mat, val){
+	$.each(mat, function(i, v){
+		mat[i] *= val;
+	});
+}

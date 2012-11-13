@@ -13,7 +13,7 @@ $(document).ready(function(){
 
     var shader_loader = new Shader_loader();
     // shader_loader.load(['rain_vs', 'rain_fs']);
-    shader_loader.load(['sprite_vs', 'sprite_fs', 'rain_vs', 'rain_fs']);
+    shader_loader.load(['sprite_vs', 'sprite_fs', 'rain_vs', 'rain_fs', 'background_fs', 'background_vs']);
 
 
     $(document).on('shaders_loaded', function(e, shaders){
@@ -27,7 +27,27 @@ $(document).ready(function(){
             vs: shaders['rain_vs.glsl'].text(),
             fs: shaders['rain_fs.glsl'].text()
         }
+        var background_shaders = {
+            vs: shaders['background_vs.glsl'].text(),
+            fs: shaders['background_fs.glsl'].text()
+        }
         var gl = engine.get_gl();
+        var boundaries = engine.get_boundaries();
+        
+
+        var background_renderer = new Renderer(gl, background_shaders);
+        var width = boundaries.botright[0];
+        var height = boundaries.topleft[1];
+        var background_rect = [
+            -1*height,    -1*width,        0.0, // bot left
+            height,    -1*width,     0.0, // top left
+            -1*height,  width,        0.0, // bot right
+            height,  width,     0.0  // top right
+        ];
+        multiply_elements(background_rect, 50);
+        background_renderer.add_geo(background_rect, [0,0,-10]);
+        engine.add_renderer(background_renderer);
+
         
         var squid_renderer = new Renderer(gl, squid_shaders);
         // var squid_renderer = new Renderer(gl, rain_shaders);
@@ -58,7 +78,6 @@ $(document).ready(function(){
         var geo_arr = [];
 
         // If the user resizes their screen, the rain wont move beacause this is only calculated once
-        var boundaries = engine.get_boundaries();
         for(var i = x_min; i < x_max; i++){
             var x = fit_bound(i, x_min, x_max, -4, 4);
             var z_rand = Math.random();
