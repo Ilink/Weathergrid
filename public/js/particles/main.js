@@ -13,7 +13,7 @@ $(document).ready(function(){
 
     var shader_loader = new Shader_loader();
     // shader_loader.load(['rain_vs', 'rain_fs']);
-    shader_loader.load(['sprite_vs', 'sprite_fs', 'rain_vs', 'rain_fs', 'background_fs', 'background_vs']);
+    shader_loader.load(['sprite_vs', 'sprite_fs', 'rain_vs', 'rain_fs', 'background_fs', 'background_vs', 'laser_fs', 'laser_vs']);
 
 
     $(document).on('shaders_loaded', function(e, shaders){
@@ -23,9 +23,13 @@ $(document).ready(function(){
             vs: shaders['sprite_vs.glsl'].text(),
             fs: shaders['sprite_fs.glsl'].text()
         };
+        // var rain_shaders = {
+        //     vs: shaders['rain_vs.glsl'].text(),
+        //     fs: shaders['rain_fs.glsl'].text()
+        // }
         var rain_shaders = {
-            vs: shaders['rain_vs.glsl'].text(),
-            fs: shaders['rain_fs.glsl'].text()
+            vs: shaders['laser_vs.glsl'].text(),
+            fs: shaders['laser_fs.glsl'].text()
         }
         var background_shaders = {
             vs: shaders['background_vs.glsl'].text(),

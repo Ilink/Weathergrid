@@ -18,6 +18,21 @@ function Renderer(gl, shaders, textures){
     var texture_builder = new Texture_builder(gl);
     var geometry = [];
     var pMatrixInv;
+    var textureCoordAttribute;
+    var vertColor;
+    var texture_coords = [
+        0.0, 0.0,
+        0.0, 1.0,
+        1.0, 0.0,
+        1.0, 1.0
+    ];
+    var gradient_coords =  [
+        0.0, 0.0,
+        0.0, 1.0,
+        1.0, 0.0,
+        1.0, 1.0
+    ];
+    var gradient_buffer = texture_builder.init_buffer(gradient_coords);
 
     function setMatrixUniforms() {
         // console.log(pMatrix);
@@ -64,6 +79,9 @@ function Renderer(gl, shaders, textures){
         textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
         gl.enableVertexAttribArray(textureCoordAttribute);
 
+        vertColor = gl.getAttribLocation(shaderProgram, "vertColor");
+        gl.enableVertexAttribArray(vertColor);
+
         shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
         shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
@@ -84,6 +102,10 @@ function Renderer(gl, shaders, textures){
             mat4.identity(mvMatrix); // reset the position for each piece of geometry
             mat4.translate(mvMatrix, geo.trans);
             mat4.rotate(mvMatrix, 40, [0,0,1], mvMatrix);
+            
+            gl.bindBuffer(gl.ARRAY_BUFFER, gradient_buffer);
+            // out of range?
+            gl.vertexAttribPointer(vertColor, gradient_buffer.itemSize, gl.FLOAT, false, 0, 0); 
 
             setMatrixUniforms();
 
@@ -125,12 +147,7 @@ function Renderer(gl, shaders, textures){
             buffer: init_buffer(verts),
             trans: mat
         }
-        var texture_coords = [
-            0.0, 0.0,
-            0.0, 1.0,
-            1.0, 0.0,
-            1.0, 1.0
-        ];
+        
         if(typeof texture !== 'undefined'){
             geo.texture = texture_builder.init(texture);
             geo.texture_buffer = texture_builder.init_buffer(texture_coords);
