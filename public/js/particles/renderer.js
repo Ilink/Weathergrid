@@ -83,6 +83,7 @@ function Renderer(gl, shaders, textures){
         $.each(geometry, function(i, geo){
             mat4.identity(mvMatrix); // reset the position for each piece of geometry
             mat4.translate(mvMatrix, geo.trans);
+            mat4.rotate(mvMatrix, 40, [0,0,1], mvMatrix);
 
             setMatrixUniforms();
 

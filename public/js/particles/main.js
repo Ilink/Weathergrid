@@ -85,7 +85,9 @@ $(document).ready(function(){
             z = fit_bound(z_rand, 0, 1, z_min, z_max);
             
             tmat = [x, boundaries.topleft[1], z];
-            var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.008, 0.09), tmat);
+            // var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.008, 0.09), tmat);
+            var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.8, 0.09), tmat);
+
             _geo.vel = Math.random()/150.0 + 0.0001;
             geo_arr.push(_geo);
         }
@@ -96,7 +98,8 @@ $(document).ready(function(){
         console.log(boundaries);
         // tmat[0] *= -1;
         tmat[2] = -1;
-        var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.02, 0.05), tmat);
+        // var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.02, 0.05), tmat);
+        // var _geo = rain_renderer.add_geo(geo_builder.rectangle(65, 0.05), tmat);
         _geo.vel = 1;
         geo_arr.push(_geo);
         ////
