@@ -11,11 +11,12 @@
 		// vec2 position = -1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;
 		vec2 position = vertColorOut.xy;
 
-		float red = position.y*2.0;
-		float green = position.y*1.5;
-		float blue = position.y*2.0;
-		float alpha = position.y*2.0;
-		gl_FragColor = vec4( red, green, blue, alpha );
+		float red = position.y;
+		float green = position.y;
+		float blue = position.y;
+		float alpha = sin(3.0*position.y);
+		// gl_FragColor = vec4( red, green, blue, alpha );
+		gl_FragColor = vec4( 0.0, 0.0, 0.0, alpha );
 	}
 
 </script>
