@@ -45,7 +45,7 @@ function Engine(canvas){
 
     function initGL(canvas) {
         try {
-            // gl = WebGLDebugUtils.makeDebugContext(canvas.getContext("experimental-webgl"));
+        	// gl = WebGLDebugUtils.makeDebugContext(canvas.getContext("experimental-webgl"));
             gl = canvas.getContext("experimental-webgl");
         } catch (e) {
         }
@@ -63,13 +63,13 @@ function Engine(canvas){
 
     var timeline = new Timeline(function(){
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        $.each(renderers, function(i, renderer){
+    	$.each(renderers, function(i, renderer){
             var current_program = renderer.get_program();
             gl.useProgram(current_program);
-            renderer.render(parameters.time, 
+    		renderer.render(parameters.time, 
                 {width: screenWidth, height: screenHeight}, 
                 pMatrix, pMatrixInv);
-        });
+    	});
     });
 
     this.start = function(){
@@ -80,11 +80,11 @@ function Engine(canvas){
     };
 
     this.add_renderer = function(renderer){
-        renderers.push(renderer);
+    	renderers.push(renderer);
     };
 
     this.get_gl = function(){
-        return gl;
+    	return gl;
     };
 
     this.get_boundaries = function(z){
