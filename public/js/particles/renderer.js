@@ -7,15 +7,18 @@ matrices.
 */
 
 function Renderer(gl, shaders, textures){
+    RendererBase.call(this, gl);
     var parameters = {  
         start_time: new Date().getTime(),    
         time: 0
     };
+    var self = this;
     var shaderProgram;
     var mvMatrix = mat4.create();
     // var pMatrix = mat4.create();
     var pMatrix;
     var texture_builder = new Texture_builder(gl);
+    var shaderProgramBuilder = new ShaderProgramBuilder(gl)
     var geometry = [];
     var pMatrixInv;
     var textureCoordAttribute;
@@ -34,12 +37,7 @@ function Renderer(gl, shaders, textures){
     ];
     var gradient_buffer = texture_builder.init_buffer(gradient_coords);
 
-    function setMatrixUniforms() {
-        // console.log(pMatrix);
-        gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
-        gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
-    }
-
+    // MOVED
     function get_shader(shader_src, type){
         var shader;
         if(type === 'fs'){
@@ -61,17 +59,7 @@ function Renderer(gl, shaders, textures){
 
     // Link shaders and set uniforms / attributes
     function setup_shaders() {
-        var fragmentShader = get_shader(shaders.fs, 'fs');
-        var vertexShader = get_shader(shaders.vs, 'vs');
-
-        shaderProgram = gl.createProgram();
-        gl.attachShader(shaderProgram, vertexShader);
-        gl.attachShader(shaderProgram, fragmentShader);
-        gl.linkProgram(shaderProgram);
-
-        if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-            console.log("Could not initialise shaders");
-        }
+        shaderProgram = shaderProgramBuilder.build(shaders);
 
         shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "position");
         gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
@@ -87,16 +75,6 @@ function Renderer(gl, shaders, textures){
         shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
     }
 
-    // Change my name?
-    function init_buffer(verts){
-        buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
-        buffer.itemSize = 3;
-        buffer.numItems = 4; // hard coded because i only want to draw squares
-        return buffer;
-    }
-
     function build(){
         $.each(geometry, function(i, geo){
             mat4.identity(mvMatrix); // reset the position for each piece of geometry
@@ -107,7 +85,7 @@ function Renderer(gl, shaders, textures){
             // out of range?
             gl.vertexAttribPointer(vertColor, gradient_buffer.itemSize, gl.FLOAT, false, 0, 0); 
 
-            setMatrixUniforms();
+            self.setDefaultUniforms(shaderProgram, pMatrix, mvMatrix);
 
             // Textures
             if(typeof geo.texture !== 'undefined'){
@@ -122,8 +100,8 @@ function Renderer(gl, shaders, textures){
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
             gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0); 
 
-            compositor.composite(geo.buffer.numItems);
-            compositor.unbind();
+            // compositor.composite(geo.buffer.numItems);
+            // compositor.unbind();
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });
@@ -146,7 +124,7 @@ function Renderer(gl, shaders, textures){
     this.add_geo = function(verts, mat, texture){
         var geo = {
             verts: verts,
-            buffer: init_buffer(verts),
+            buffer: self.initGeoBuffer(verts),
             trans: mat
         }
         
@@ -163,3 +141,6 @@ function Renderer(gl, shaders, textures){
     };
 
 }
+
+Renderer.prototype = new RendererBase();
+Renderer.prototype.constructor = Renderer;
