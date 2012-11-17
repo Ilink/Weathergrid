@@ -119,9 +119,11 @@ function Renderer(gl, shaders, textures){
                 gl.uniform1i(shaderProgram.samplerUniform, 0);
             }
 
+            compositor.composite(geo.buffer.numItems);
+            compositor.unbind();
+
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
             gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0); 
-
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });

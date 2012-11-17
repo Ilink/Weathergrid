@@ -15,4 +15,10 @@ function Compositor(gl){
         gl.framebufferTexture2D(
             gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
     }
+
+    this.unbind = function(){
+    	setFramebuffer(null, canvas.width, canvas.height);
+    	gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    	// gl.viewport(0, 0, width, height);
+    }
 }
