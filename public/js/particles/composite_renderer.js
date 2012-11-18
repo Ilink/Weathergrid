@@ -48,10 +48,10 @@ function CompositeRenderer(gl, properties){
         shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "position");
         gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-        textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+        shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
         gl.enableVertexAttribArray(textureCoordAttribute);
 
-        vertColor = gl.getAttribLocation(shaderProgram, "vertColor");
+        shaderProgram.vertColor = gl.getAttribLocation(shaderProgram, "vertColor");
         gl.enableVertexAttribArray(vertColor);
 
         shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
@@ -73,7 +73,7 @@ function CompositeRenderer(gl, properties){
 
         gl.bindBuffer(gl.ARRAY_BUFFER, gradient_buffer);
         // This is out of range, for some reason
-        gl.vertexAttribPointer(vertColor, gradient_buffer.itemSize, gl.FLOAT, false, 0, 0); 
+        gl.vertexAttribPointer(shaderProgram.vertColor, gradient_buffer.itemSize, gl.FLOAT, false, 0, 0); 
         self.setDefaultUniforms(program, pMatrix, mvMatrix);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
@@ -83,16 +83,12 @@ function CompositeRenderer(gl, properties){
 
     function build(){
         $.each(geometry, function(i, geo){
-            
             var compositeTextureResult = compositor.compose(function(program){
                 _build(program, geo);
             }, geo);
 
-            // Reset to the final shader
             gl.useProgram(shaderProgram);
-
             _build(shaderProgram, geo);
-
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });
     }
