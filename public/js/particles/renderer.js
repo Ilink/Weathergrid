@@ -13,12 +13,11 @@ function Renderer(gl, shaders, textures){
         time: 0
     };
     var self = this;
-    var shaderProgram;
     var mvMatrix = mat4.create();
     // var pMatrix = mat4.create();
     var pMatrix;
     var texture_builder = new Texture_builder(gl);
-    var shaderProgramBuilder = new ShaderProgramBuilder(gl)
+    var shaderProgramBuilder = new ShaderProgramBuilder(gl);
     var geometry = [];
     var pMatrixInv;
     var textureCoordAttribute;
@@ -36,31 +35,10 @@ function Renderer(gl, shaders, textures){
         1.0, 1.0
     ];
     var gradient_buffer = texture_builder.init_buffer(gradient_coords);
+    var shaderProgram = shaderProgramBuilder.build(shaders);
 
-    // MOVED
-    function get_shader(shader_src, type){
-        var shader;
-        if(type === 'fs'){
-            shader = gl.createShader(gl.FRAGMENT_SHADER);
-        } else if(type === 'vs'){
-            shader = gl.createShader(gl.VERTEX_SHADER);
-        } else return null;
 
-        gl.shaderSource(shader, shader_src);
-        gl.compileShader(shader);
-
-        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            console.log(gl.getShaderInfoLog(shader));
-            return null;
-        }
-
-        return shader;
-    }
-
-    // Link shaders and set uniforms / attributes
     function setup_shaders() {
-        shaderProgram = shaderProgramBuilder.build(shaders);
-
         shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "position");
         gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
@@ -98,10 +76,7 @@ function Renderer(gl, shaders, textures){
             }
 
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
-            gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0); 
-
-            // compositor.composite(geo.buffer.numItems);
-            // compositor.unbind();
+            gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });
