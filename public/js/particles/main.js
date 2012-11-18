@@ -39,20 +39,19 @@ $(document).ready(function(){
             vs: shaders['blur_vs.glsl'].text(),
             fs: shaders['blur_fs.glsl'].text()
         }
+
         var gl = engine.get_gl();
         var boundaries = engine.get_boundaries();
         var boundaries_far = engine.get_boundaries(-10);
-
-
 
         var background_renderer = new Renderer(gl, background_shaders);
 
         // The shader for this does not use the perpsective matrix, so we just need clip space coords
         var background_rect = [
-            -1,   -1,        0.0, // bot left
+            -1,   -1,     0.0, // bot left
             -1,    1,     0.0, // top left
-            1,  -1,        0.0, // bot right
-            1,  1,     0.0  // top right
+            1,    -1,     0.0, // bot right
+            1,     1,     0.0  // top right
         ];
         background_renderer.add_geo(background_rect, [0,0,-40]);
         engine.add_renderer(background_renderer);
@@ -67,8 +66,10 @@ $(document).ready(function(){
         var tmat = [-1.5, -2.0, -7.0];
         var squid_sprite = squid_renderer.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid_large.png');
 
-        
-        var rain_renderer = new Renderer(gl, rain_shaders);
+        var rain_renderer = new CompositeRenderer(gl, {
+            shaders: rain_shaders, 
+            blurShaders: blur_shaders
+        });
         engine.add_renderer(rain_renderer);
 
         /*
@@ -99,18 +100,6 @@ $(document).ready(function(){
             _geo.vel = Math.random()/150.0 + 0.0001;
             geo_arr.push(_geo);
         }
-
-        // Test Geo
-        var boundaries = engine.get_boundaries();
-        tmat = boundaries.botright;
-        console.log(boundaries);
-        // tmat[0] *= -1;
-        tmat[2] = -1;
-        // var _geo = rain_renderer.add_geo(geo_builder.rectangle(0.02, 0.05), tmat);
-        // var _geo = rain_renderer.add_geo(geo_builder.rectangle(65, 0.05), tmat);
-        _geo.vel = 1;
-        geo_arr.push(_geo);
-        ////
 
         var timeline = new Timeline(function(dt){
             for(var i = 0; i < geo_arr.length; i++){
