@@ -12,6 +12,7 @@ function RendererBase(gl){
 RendererBase.prototype.setDefaultUniforms = function(program, pMatrix, mvMatrix){
     this.gl.uniformMatrix4fv(this.gl.getUniformLocation(program, "uPMatrix"), false, pMatrix);
     this.gl.uniformMatrix4fv(this.gl.getUniformLocation(program, "uMVMatrix"), false, mvMatrix);
+    this.gl.uniform1i(this.gl.getUniformLocation(program, "uSampler"), 1);
 }
 
 RendererBase.prototype.initGeoBuffer = function(verts){
