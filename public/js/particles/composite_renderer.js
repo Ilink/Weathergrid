@@ -66,62 +66,39 @@ function CompositeRenderer(gl, properties){
     }
 
     // the defaults
-    function _build(geo){
+    function _build(program, geo){
         mat4.identity(mvMatrix); // reset the position for each piece of geometry
         mat4.translate(mvMatrix, geo.trans);
         mat4.rotate(mvMatrix, 40, [0,0,1], mvMatrix);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, gradient_buffer);
+        // This is out of range, for some reason
         gl.vertexAttribPointer(vertColor, gradient_buffer.itemSize, gl.FLOAT, false, 0, 0); 
-        self.setDefaultUniforms(shaderProgram, pMatrix, mvMatrix);
+        self.setDefaultUniforms(program, pMatrix, mvMatrix);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
-        gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 
-            geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
-        
+        gl.vertexAttribPointer(program.vertexPositionAttribute, 
+            geo.buffer.itemSize, gl.FLOAT, false, 0, 0);   
     }
 
     function build(){
         $.each(geometry, function(i, geo){
             
-            var compositeTextureResult = compositor.compose(function(){
-                _build(geo);
+            var compositeTextureResult = compositor.compose(function(program){
+                _build(program, geo);
             }, geo);
 
             // Reset to the final shader
             gl.useProgram(shaderProgram);
 
-            _build(geo);
-            // mat4.identity(mvMatrix); // reset the position for each piece of geometry
-            // mat4.translate(mvMatrix, geo.trans);
-            // mat4.rotate(mvMatrix, 40, [0,0,1], mvMatrix);
-            
-            // gl.bindBuffer(gl.ARRAY_BUFFER, gradient_buffer);
-            // // out of range?
-            // gl.vertexAttribPointer(vertColor, gradient_buffer.itemSize, gl.FLOAT, false, 0, 0); 
-
-            // self.setDefaultUniforms(shaderProgram, pMatrix, mvMatrix);
-
-            // // Textures
-            // // The only textures this will use is the reuslt of the compositing
-            // // if(typeof geo.texture !== 'undefined'){
-            // //     gl.bindBuffer(gl.ARRAY_BUFFER, geo.texture_buffer);
-            // //     gl.vertexAttribPointer(shaderProgram.textureCoordAttribute,  geo.texture_buffer.itemSize, gl.FLOAT, false, 0, 0);
-
-            // //     gl.activeTexture(gl.TEXTURE0);
-            // //     gl.bindTexture(gl.TEXTURE_2D, geo.texture);
-            // //     gl.uniform1i(shaderProgram.samplerUniform, 0);
-            // // }
-
-            // gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
-            // gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
+            _build(shaderProgram, geo);
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });
     }
 
     setup_shaders(shaderProgram);
-    // setup_composite_shaders(compositor.programs);
+    setup_composite_shaders(compositor.programs);
 
     this.render = function(time, dim, perspective, perspectiveInv) {
         parameters.time = new Date().getTime() - parameters.start_time;

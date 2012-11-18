@@ -30,12 +30,16 @@ function BlurCompositor(gl, shaderPair){
     */
     this.compose = function(setup, geo, texture){
         var textureResult;
+        gl.bindFramebuffer(gl.FRAMEBUFFER, fbos[0]);
         gl.useProgram(program);
+        setup(program);
+
 
         // Attach a texture to it.
         // gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         return textureResult;
     };
 

@@ -12,4 +12,5 @@ function makeFbos(gl){
 		// gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
 		// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	}
+	return fbos;
 }
