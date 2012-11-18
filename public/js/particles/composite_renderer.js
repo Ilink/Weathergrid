@@ -57,6 +57,7 @@ function CompositeRenderer(gl, properties){
         shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
         shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+        
     }
 
     function setup_composite_shaders(programs){
@@ -98,9 +99,6 @@ function CompositeRenderer(gl, properties){
 
     this.render = function(time, dim, perspective, perspectiveInv) {
         parameters.time = new Date().getTime() - parameters.start_time;
-
-        gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), time / 1000 );
-        gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), dim.width, dim.height );
 
         pMatrix = perspective;
         pMatrixInv = perspectiveInv;
