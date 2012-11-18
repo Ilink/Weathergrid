@@ -18,6 +18,7 @@ $(document).ready(function(){
 
     $(document).on('shaders_loaded', function(e, shaders){
         var engine = new Engine($('canvas'));
+        var tmat;
 
         var squid_shaders = {
             vs: shaders['sprite_vs.glsl'].text(),
@@ -56,14 +57,9 @@ $(document).ready(function(){
         background_renderer.add_geo(background_rect, [0,0,-40]);
         engine.add_renderer(background_renderer);
 
-        
         var squid_renderer = new Renderer(gl, squid_shaders);
-        // var squid_renderer = new Renderer(gl, rain_shaders);
-
         engine.add_renderer(squid_renderer);
-
-        // var tmat = mat4.create();
-        var tmat = [-1.5, -2.0, -7.0];
+        tmat = [-1.5, -2.0, -7.0];
         var squid_sprite = squid_renderer.add_geo(geo_builder.rectangle(1.0, 1.0), tmat, 'squid_large.png');
 
         var rain_renderer = new CompositeRenderer(gl, {
