@@ -14,3 +14,12 @@ function makeFbos(gl){
 	}
 	return fbos;
 }
+
+function initGeoBuffer(gl, verts){
+	var buffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+	buffer.itemSize = 3;
+	buffer.numItems = verts.length/3;
+	return buffer;	
+}

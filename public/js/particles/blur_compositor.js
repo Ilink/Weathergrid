@@ -25,11 +25,10 @@ function BlurCompositor(gl, shaderPairs){
     var program = shaderProgramBuilder.build(shaderPairs[0]);
     var program2 = shaderProgramBuilder.build(shaderPairs[1])
     self.programs.push(program);
+    self.programs.push(program2);
 
     var size = 1024;
-
     var textureResult;
-
 
     function setupQuad(){
         var verts = [
@@ -104,10 +103,11 @@ function BlurCompositor(gl, shaderPairs){
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
 
         // send result to the next framebuffer
+        
+        // activateFbo(fbos[1], fbos[0].texture);
+        gl.useProgram(program2);
         gl.bindTexture(gl.TEXTURE_2D, fbos[0].texture);
-        activateFbo(fbos[1], fbos[0].texture);
-        // gl.useProgram(program2);
-        // setup(program2);
+        setup(program2);
 
         /*
         Ideas about what is wrong:
@@ -118,10 +118,10 @@ function BlurCompositor(gl, shaderPairs){
         // gl.bindFramebuffer(gl.FRAMEBUFFER, fbos[1]);
         // gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, fbos[0].texture, 0);
 
-        drawQuad();
-
+    
         // exit
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        drawQuad();
         return textureResult;
     };
 

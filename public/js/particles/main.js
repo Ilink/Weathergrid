@@ -13,8 +13,9 @@ $(document).ready(function(){
 
     var shader_loader = new Shader_loader();
     // shader_loader.load(['rain_vs', 'rain_fs']);
-    shader_loader.load(['sprite_vs', 'sprite_fs', 'rain_vs', 'rain_fs', 'background_fs', 'background_vs', 'laser_fs', 'laser_vs', 'blur_fs', 'blur_vs']);
-
+    shader_loader.load(['sprite_vs', 'sprite_fs', 'rain_vs', 'rain_fs', 
+        'background_fs', 'background_vs', 'laser_fs', 'laser_vs', 'blur_fs', 'blur_vs',
+        'composite_vs', 'composite_fs']);
 
     $(document).on('shaders_loaded', function(e, shaders){
         var engine = new Engine($('canvas'));
@@ -36,6 +37,10 @@ $(document).ready(function(){
             vs: shaders['blur_vs.glsl'].text(),
             fs: shaders['blur_fs.glsl'].text()
         };
+        var composite_shaders = {
+            vs: shaders['composite_vs.glsl'].text(),
+            fs: shaders['composite_fs.glsl'].text()
+        };
 
         var gl = engine.get_gl();
         var boundaries = engine.get_boundaries();
@@ -51,7 +56,7 @@ $(document).ready(function(){
             1,     1,     0.0  // top right
         ];
         background_renderer.add_geo(background_rect, [0,0,-40]);
-        engine.add_renderer(background_renderer);
+        // engine.add_renderer(background_renderer);
 
         var squid_renderer = new Renderer(gl, squid_shaders);
         engine.add_renderer(squid_renderer);
@@ -62,7 +67,7 @@ $(document).ready(function(){
             shaders: rain_shaders, 
             compositeShaders: {
                 blurShaders: blur_shaders,
-                imageShader: background_shaders
+                imageShader: composite_shaders
             }
         });
         engine.add_renderer(rain_renderer);
@@ -74,7 +79,7 @@ $(document).ready(function(){
 
         Also, 1.5 is the top of the screen, hooray
         */
-        var x_max = 100;
+        var x_max = 2;
         var x_min = 0;
         var z_min = -5.0;
         var z_max = -1;
@@ -83,7 +88,7 @@ $(document).ready(function(){
         var geo_arr = [];
 
         // If the user resizes their screen, the rain wont move beacause this is only calculated once
-        for(var i = x_min; i < x_max; i++){
+        for(var i = x_min; i <= x_max; i++){
             var x = fit_bound(i, x_min, x_max, -4, 4);
             var z_rand = Math.random();
             z = fit_bound(z_rand, 0, 1, z_min, z_max);

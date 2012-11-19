@@ -57,8 +57,7 @@ function CompositeRenderer(gl, properties){
 
         shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
-        shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
-        
+        shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");        
     }
 
     function setup_composite_shaders(programs){
