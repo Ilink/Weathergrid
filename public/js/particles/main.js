@@ -24,22 +24,18 @@ $(document).ready(function(){
             vs: shaders['sprite_vs.glsl'].text(),
             fs: shaders['sprite_fs.glsl'].text()
         };
-        // var rain_shaders = {
-        //     vs: shaders['rain_vs.glsl'].text(),
-        //     fs: shaders['rain_fs.glsl'].text()
-        // }
         var rain_shaders = {
             vs: shaders['laser_vs.glsl'].text(),
             fs: shaders['laser_fs.glsl'].text()
-        }
+        };
         var background_shaders = {
             vs: shaders['background_vs.glsl'].text(),
             fs: shaders['background_fs.glsl'].text()
-        }
+        };
         var blur_shaders = {
             vs: shaders['blur_vs.glsl'].text(),
             fs: shaders['blur_fs.glsl'].text()
-        }
+        };
 
         var gl = engine.get_gl();
         var boundaries = engine.get_boundaries();
@@ -64,7 +60,10 @@ $(document).ready(function(){
 
         var rain_renderer = new CompositeRenderer(gl, {
             shaders: rain_shaders, 
-            blurShaders: blur_shaders
+            compositeShaders: {
+                blurShaders: blur_shaders,
+                imageShader: background_shaders
+            }
         });
         engine.add_renderer(rain_renderer);
 

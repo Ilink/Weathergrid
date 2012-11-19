@@ -11,7 +11,7 @@ Alternatively, the composite is created with a set of required attributes and un
 If the uniforms are not present, it will not work. 
 */
 
-function BlurCompositor(gl, shaderPair){
+function BlurCompositor(gl, shaderPairs){
     // var fbos = makeFbos(gl);
     var fbos = [];
     var shaderProgramBuilder = new ShaderProgramBuilder(gl);
@@ -22,16 +22,40 @@ function BlurCompositor(gl, shaderPair){
         // var program = shaderProgramBuilder.build(pair);
         // self.programs.push(program);
     // });
-    var program = shaderProgramBuilder.build(shaderPair);
+    var program = shaderProgramBuilder.build(shaderPairs[0]);
+    var program2 = shaderProgramBuilder.build(shaderPairs[1])
     self.programs.push(program);
 
-    var size = 256;
+    var size = 1024;
 
-    function drawQuad(){
+    var textureResult;
 
+
+    function setupQuad(){
+        var verts = [
+            -1,   -1,     0.0, // bot left
+            -1,    1,     0.0, // top left
+            1,    -1,     0.0, // bot right
+            1,     1,     0.0  // top right
+        ];
+        var tmat = [0,0,-40];
+
+        var buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+        buffer.itemSize = 3;
+        buffer.numItems = verts.length/3;
+        return buffer;
     }
 
-    function _makeFbo(){
+    var quad = setupQuad();
+
+    function drawQuad(){
+        gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, quad.numItems);
+    }
+
+    function makeFbo(){
         // Create the framebuffer
         var framebuffer = gl.createFramebuffer();
 
@@ -52,36 +76,51 @@ function BlurCompositor(gl, shaderPair){
         return framebuffer;
     }
 
-    function activateFbo(fbo){
+    function activateFbo(fbo, texture){
         gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, fbo.texture, 0);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
         gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, fbo.depthBuffer);
     }
 
-    fbos[0] = _makeFbo();
-    fbos[1] = _makeFbo();
-
+    fbos[0] = makeFbo();
+    fbos[1] = makeFbo();
 
     /*
     Ping pongs and does whatever
     then returns a texture result, or the final framebuffer
     */
+    var first = true;
     this.compose = function(setup, geo, texture){
+        if(first){
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            first = false;
+        }
         var textureResult;
-        activateFbo(fbos[0]);
-        // gl.bindFramebuffer(gl.FRAMEBUFFER, fbos[0]);
-        // gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, colorTexture, 0);
-        // gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+        activateFbo(fbos[0], fbos[0].texture);
 
-        // gl.bindFramebuffer(gl.FRAMEBUFFER, fbos[0]);
         gl.useProgram(program);
         setup(program);
 
-
-        // Attach a texture to it.
-        // gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
-
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
+
+        // send result to the next framebuffer
+        gl.bindTexture(gl.TEXTURE_2D, fbos[0].texture);
+        activateFbo(fbos[1], fbos[0].texture);
+        // gl.useProgram(program2);
+        // setup(program2);
+
+        /*
+        Ideas about what is wrong:
+            => the background isn't drawn, so the sampler has nothing to grab from
+                => draw quad
+        */
+
+        // gl.bindFramebuffer(gl.FRAMEBUFFER, fbos[1]);
+        // gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, fbos[0].texture, 0);
+
+        drawQuad();
+
+        // exit
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         return textureResult;
     };

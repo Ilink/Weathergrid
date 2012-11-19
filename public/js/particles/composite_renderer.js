@@ -10,7 +10,8 @@ matrices.
 function CompositeRenderer(gl, properties){
     var shaders = properties.shaders;
     var textures = properties.textures;
-    var blurShaders = properties.blurShaders;
+    var blurShaders = properties.compositeShaders.blurShaders;
+    var imageShader = properties.compositeShaders.imageShader;
 
     RendererBase.call(this, gl);
     var parameters = {  
@@ -23,7 +24,7 @@ function CompositeRenderer(gl, properties){
     var pMatrix;
     var texture_builder = new Texture_builder(gl);
     var shaderProgramBuilder = new ShaderProgramBuilder(gl);
-    var compositor = new BlurCompositor(gl, blurShaders);
+    var compositor = new BlurCompositor(gl, [blurShaders, imageShader]);
     var geometry = [];
     var pMatrixInv;
     var textureCoordAttribute;
@@ -79,7 +80,7 @@ function CompositeRenderer(gl, properties){
 
         gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
         gl.vertexAttribPointer(program.vertexPositionAttribute, 
-            geo.buffer.itemSize, gl.FLOAT, false, 0, 0);   
+            geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
     }
 
     function build(){
@@ -111,7 +112,7 @@ function CompositeRenderer(gl, properties){
             verts: verts,
             buffer: self.initGeoBuffer(verts),
             trans: mat
-        }
+        };
         
         if(typeof texture !== 'undefined'){
             geo.texture = texture_builder.init(texture);
