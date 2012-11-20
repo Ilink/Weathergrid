@@ -7,7 +7,7 @@ matrices.
 */
 
 // function CompositeRenderer(gl, shaders, textures, blurShaders){
-function CompositeRenderer(gl, properties){
+function CompositeRenderer(properties){
     var shaders = properties.shaders;
     var textures = properties.textures;
     var blurShaders = properties.compositeShaders.blurShaders;
@@ -22,8 +22,9 @@ function CompositeRenderer(gl, properties){
     var mvMatrix = mat4.create();
     // var pMatrix = mat4.create();
     var pMatrix;
-    var texture_builder = new Texture_builder(gl);
+    var texture = new Texture(gl);
     var shaderProgramBuilder = new ShaderProgramBuilder(gl);
+    var fboBuilder = new FboBuilder();
     var compositor = new BlurCompositor(gl, [blurShaders, imageShader]);
     var geometry = [];
     var pMatrixInv;
@@ -84,9 +85,11 @@ function CompositeRenderer(gl, properties){
 
     function build(){
         $.each(geometry, function(i, geo){
-            var compositeTextureResult = compositor.compose(function(program){
-                _build(program, geo);
-            }, geo);
+            // var compositeTextureResult = compositor.compose(function(program){
+            //     _build(program, geo);
+            // }, geo);
+
+
 
             gl.useProgram(shaderProgram);
             _build(shaderProgram, geo);

@@ -1,20 +1,3 @@
-/*
-Makes two frame buffers, suitable for compositing operations
-*/
-function makeFbos(gl){
-	var fbo, fbos = [];
-
-	for(var i = 0; i < 2; i++){
-		fbo = gl.createFramebuffer();
-		fbos.push(fbo);
-		
-		// this is how you set / unset a FBO
-		// gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-		// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	}
-	return fbos;
-}
-
 function initGeoBuffer(gl, verts){
 	var buffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -22,4 +5,26 @@ function initGeoBuffer(gl, verts){
 	buffer.itemSize = 3;
 	buffer.numItems = verts.length/3;
 	return buffer;	
+}
+
+var geo_builder = {
+	/*
+	Verts:
+	2  4
+	1  3
+	*/
+    rectangle: function(width, height){
+        return [
+            0.0,    0.0,        0.0,
+            0.0,    height,     0.0,
+            width,  0.0,        0.0,
+            width,  height,     0.0
+        ];
+    },
+    rectangle_gradient: [
+    	0.0, 0.0, 0.0,
+    	0.0, 1.0, 0.0,
+    	1.0, 0.0, 0.0,
+    	1.0, 1.0, 0.0
+    ]
 }

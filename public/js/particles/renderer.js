@@ -16,8 +16,6 @@ function Renderer(gl, shaders, textures){
     var mvMatrix = mat4.create();
     // var pMatrix = mat4.create();
     var pMatrix;
-    var texture_builder = new Texture_builder(gl);
-    var shaderProgramBuilder = new ShaderProgramBuilder(gl);
     var geometry = [];
     var pMatrixInv;
     var textureCoordAttribute;
@@ -34,9 +32,8 @@ function Renderer(gl, shaders, textures){
         1.0, 0.0,
         1.0, 1.0
     ];
-    var gradient_buffer = texture_builder.init_buffer(gradient_coords);
-    var shaderProgram = shaderProgramBuilder.build(shaders);
-
+    
+    var shaderProgram = buildShaderProgram(gl, shaders);
 
     function setup_shaders() {
         shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "position");
@@ -59,20 +56,14 @@ function Renderer(gl, shaders, textures){
             mat4.translate(mvMatrix, geo.trans);
             mat4.rotate(mvMatrix, 40, [0,0,1], mvMatrix);
             
-            gl.bindBuffer(gl.ARRAY_BUFFER, gradient_buffer);
-            // out of range?
-            gl.vertexAttribPointer(vertColor, gradient_buffer.itemSize, gl.FLOAT, false, 0, 0); 
+            if(vertColor > 0)
+                gradientBuffer.set();
 
             self.setDefaultUniforms(shaderProgram, pMatrix, mvMatrix);
 
             // Textures
             if(typeof geo.texture !== 'undefined'){
-                gl.bindBuffer(gl.ARRAY_BUFFER, geo.texture_buffer);
-                gl.vertexAttribPointer(shaderProgram.textureCoordAttribute,  geo.texture_buffer.itemSize, gl.FLOAT, false, 0, 0);
-
-                gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_2D, geo.texture);
-                gl.uniform1i(shaderProgram.samplerUniform, 0);
+                geo.texture.set();
             }
 
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
@@ -83,12 +74,12 @@ function Renderer(gl, shaders, textures){
     }
 
     setup_shaders();
+    var gradientBuffer = new Buffer(gl, gradient_coords, 2, vertColor);
 
     this.render = function(time, dim, perspective, perspectiveInv) {
-        parameters.time = new Date().getTime() - parameters.start_time;
-
-        gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), time / 1000 );
-        gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), dim.width, dim.height );
+        // parameters.time = new Date().getTime() - parameters.start_time;
+        // gl.uniform1f( gl.getUniformLocation( shaderProgram, 'time' ), time / 1000 );
+        // gl.uniform2f( gl.getUniformLocation( shaderProgram, 'resolution' ), dim.width, dim.height );
 
         pMatrix = perspective;
         pMatrixInv = perspectiveInv;
@@ -96,16 +87,15 @@ function Renderer(gl, shaders, textures){
         build();
     };
 
-    this.add_geo = function(verts, mat, texture){
+    this.add_geo = function(verts, mat, textureName){
         var geo = {
             verts: verts,
             buffer: self.initGeoBuffer(verts),
             trans: mat
         }
         
-        if(typeof texture !== 'undefined'){
-            geo.texture = texture_builder.init(texture);
-            geo.texture_buffer = texture_builder.init_buffer(texture_coords);
+        if(typeof textureName !== 'undefined'){
+            geo.texture = new Texture(gl, textureName, gl.getUniformLocation(shaderProgram, "uSampler"), gl.getAttribLocation(shaderProgram, "aTextureCoord"));
         }
         geometry.push(geo);
         return geo;

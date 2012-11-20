@@ -14,7 +14,7 @@ If the uniforms are not present, it will not work.
 function BlurCompositor(gl, shaderPairs){
     // var fbos = makeFbos(gl);
     var fbos = [];
-    var shaderProgramBuilder = new ShaderProgramBuilder(gl);
+    var shader = new Shader(gl);
     var self = this;
 
     this.programs = [];
@@ -22,8 +22,8 @@ function BlurCompositor(gl, shaderPairs){
         // var program = shaderProgramBuilder.build(pair);
         // self.programs.push(program);
     // });
-    var program = shaderProgramBuilder.build(shaderPairs[0]);
-    var program2 = shaderProgramBuilder.build(shaderPairs[1])
+    var program = buildShaderProgram(shaderPairs[0]);
+    var program2 = buildShaderProgram(shaderPairs[1]);
     self.programs.push(program);
     self.programs.push(program2);
 
