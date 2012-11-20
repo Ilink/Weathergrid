@@ -47,17 +47,16 @@ $(document).ready(function(){
         var boundaries = engine.get_boundaries();
         var boundaries_far = engine.get_boundaries(-10);
 
-        // var background_renderer = new Renderer(gl, background_shaders);
-
-        // // The shader for this does not use the perpsective matrix, so we just need clip space coords
-        // var background_rect = [
-        //     -1,   -1,     0.0, // bot left
-        //     -1,    1,     0.0, // top left
-        //     1,    -1,     0.0, // bot right
-        //     1,     1,     0.0  // top right
-        // ];
-        // background_renderer.add_geo(background_rect, [0,0,-40]);
-        // engine.add_renderer(background_renderer);
+        var background_renderer = new Renderer(gl, background_shaders);
+        // The shader for this does not use the perpsective matrix, so we just need clip space coords
+        var background_rect = [
+            -1,   -1,     0.0, // bot left
+            -1,    1,     0.0, // top left
+            1,    -1,     0.0, // bot right
+            1,     1,     0.0  // top right
+        ];
+        background_renderer.add_geo(background_rect, [0,0,-40]);
+        engine.add_renderer(background_renderer);
 
         var squid_renderer = new Renderer(gl, squid_shaders);
         engine.add_renderer(squid_renderer);

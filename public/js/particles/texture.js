@@ -7,7 +7,6 @@ For now this just does Quads
 function Texture(gl, name, sampler, attr){
     var self = this;
 
-    // this is right
     function handleLoadedTexture(texture) {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -46,7 +45,6 @@ function Texture(gl, name, sampler, attr){
     this.glBuffer = initBuffer(self.coords);
     this.glTexture;
     initGlTexture(name);
-    
 
     this.set = function(){
         gl.bindBuffer(gl.ARRAY_BUFFER, self.glBuffer);

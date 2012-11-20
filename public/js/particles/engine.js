@@ -64,8 +64,7 @@ function Engine(canvas){
     var timeline = new Timeline(function(){
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         $.each(renderers, function(i, renderer){
-            var current_program = renderer.get_program();
-            gl.useProgram(current_program);
+            gl.useProgram(renderer.shaderProgram);
             renderer.render(parameters.time, 
                 {width: screenWidth, height: screenHeight}, 
                 pMatrix, pMatrixInv);

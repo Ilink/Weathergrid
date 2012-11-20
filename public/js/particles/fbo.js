@@ -1,5 +1,7 @@
 function Fbo(gl){
-	this.makeFbo = function(){
+	var self = this;
+
+	function makeFbo(){
 		// Create the framebuffer
 		var framebuffer = gl.createFramebuffer();
 
@@ -19,12 +21,20 @@ function Fbo(gl){
 
 		return framebuffer;
 	}
-	this.activateFbo = function(fbo){
-		gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+
+	this.fbo = makeFbo();
+
+	this.activate = function(){
+		gl.bindFramebuffer(gl.FRAMEBUFFER, self.fbo);
 		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
-		gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, fbo.depthBuffer);
-	}
-	this.deactivateFbo = function(){
+		gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, self.fbo.depthBuffer);
+	};
+
+	this.deactivate = function(){
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	}
+	};
+}
+
+function Fbo(gl){
+
 }
