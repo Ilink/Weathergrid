@@ -1,4 +1,4 @@
-function Fbo(gl){
+function Fbo(gl, size){
 	var self = this;
 
 	function makeFbo(){
@@ -33,8 +33,4 @@ function Fbo(gl){
 	this.deactivate = function(){
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 	};
-}
-
-function Fbo(gl){
-
 }

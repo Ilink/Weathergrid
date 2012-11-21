@@ -3,7 +3,7 @@ Renderer
 Default one - this handles spirtes and the background.
 */
 
-function Renderer(gl, shaders, textures){
+function RainRenderer(gl, shaders, textures){
     RendererBase.call(this, {gl: gl, shaders: shaders});
 
     var self = this;
@@ -17,6 +17,7 @@ function Renderer(gl, shaders, textures){
         1.0, 0.0,
         1.0, 1.0
     ];
+    var fbo = new Fbo(gl, 256);
     
     // this stays per-renderer
     function setup_shaders() {
@@ -62,5 +63,5 @@ function Renderer(gl, shaders, textures){
     };
 }
 
-Renderer.prototype = new RendererBase();
-Renderer.prototype.constructor = Renderer;
+RainRenderer.prototype = new RendererBase();
+RainRenderer.prototype.constructor = RainRenderer;

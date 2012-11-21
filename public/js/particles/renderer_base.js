@@ -11,10 +11,6 @@ function RendererBase(args){
         this.gl = args.gl;
         this.shaderProgram = buildShaderProgram(this.gl, args.shaders);
         this.geo = [];
-        // this.time = {
-        //     start: new Date().getTime(),    
-        //     end: 0
-        // }
     }
 }
 
@@ -34,7 +30,7 @@ RendererBase.prototype.initGeoBuffer = function(verts){
     return buffer;
 }
 
-// This should work with actual geo objects
+//todo This should work with actual geo objects
 RendererBase.prototype.addGeo = function(verts, mat, textureName){
     var self = this;
     var geo = {

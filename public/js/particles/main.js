@@ -67,6 +67,8 @@ $(document).ready(function(){
             'squid_large.png'
         );
 
+        var rainRenderer = new RainRenderer(gl, rain_shaders);
+
         // var rain_renderer = new CompositeRenderer(gl, {
         //     shaders: rain_shaders, 
         //     compositeShaders: {
