@@ -45,8 +45,8 @@ function Engine(canvas){
 
     function initGL(canvas) {
         try {
-            // gl = WebGLDebugUtils.makeDebugContext(canvas.getContext("experimental-webgl"));
-            gl = canvas.getContext("experimental-webgl");
+            gl = WebGLDebugUtils.makeDebugContext(canvas.getContext("experimental-webgl"));
+            // gl = canvas.getContext("experimental-webgl");
         } catch (e) {
         }
         if (!gl) {
