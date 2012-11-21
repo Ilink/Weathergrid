@@ -32,5 +32,5 @@ var geo_builder = {
         -1,    1,     0.0, // top left
         1,    -1,     0.0, // bot right
         1,     1,     0.0  // top right
-    ];
+    ]
 }

@@ -45,10 +45,8 @@ function Renderer(gl, shaders, textures){
             }
 
             gradientBuffer.set();
-
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.buffer);
             gl.vertexAttribPointer(position, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
-
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
         });
     }

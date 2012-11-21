@@ -4,6 +4,7 @@ Texture
 For now this just does Quads
 */
 
+// todo: rename to SpriteTexture
 function Texture(gl, name, sampler, attr){
     var self = this;
 
