@@ -25,6 +25,7 @@ function Fbo(gl, size){
 	}
 
 	this.fbo = makeFbo();
+	this.glTexture = texture;
 
 	this.activate = function(){
 		gl.bindFramebuffer(gl.FRAMEBUFFER, self.fbo);
