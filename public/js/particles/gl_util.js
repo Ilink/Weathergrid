@@ -26,5 +26,11 @@ var geo_builder = {
     	0.0, 1.0, 0.0,
     	1.0, 0.0, 0.0,
     	1.0, 1.0, 0.0
-    ]
+    ],
+    fullScreenQuad: [
+        -1,   -1,     0.0, // bot left
+        -1,    1,     0.0, // top left
+        1,    -1,     0.0, // bot right
+        1,     1,     0.0  // top right
+    ];
 }

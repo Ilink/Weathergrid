@@ -44,4 +44,5 @@ RendererBase.prototype.addGeo = function(verts, mat, textureName){
             "uSampler"), self.gl.getAttribLocation(self.shaderProgram, "aTextureCoord"));
     }
     this.geo.push(geo);
+    return geo;
 }

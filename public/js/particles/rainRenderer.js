@@ -38,6 +38,7 @@ function RainRenderer(gl, shaders, textures){
             mat4.translate(mvMatrix, geo.trans);
             mat4.rotate(mvMatrix, 40, [0,0,1], mvMatrix);
 
+            fbo.activate();
             self.__setDefaultUniforms(self.shaderProgram, pMatrix, mvMatrix, dim);
 
             // Textures
@@ -51,6 +52,7 @@ function RainRenderer(gl, shaders, textures){
             gl.vertexAttribPointer(position, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
+            fbo.deactivate();
         });
     }
 
