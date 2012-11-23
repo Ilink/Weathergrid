@@ -3,7 +3,7 @@ Renderer
 Default one - this handles spirtes and the background.
 */
 
-function RainRenderer(gl, shaders, textures){
+function RainRenderer(gl, shaders, rttShaders){
     RendererBase.call(this, {gl: gl, shaders: shaders});
 
     var self = this;
@@ -18,8 +18,7 @@ function RainRenderer(gl, shaders, textures){
         1.0, 1.0
     ];
     var fbo = new Fbo(gl, 256);
-    var rtt = new Rtt(gl, fbo.glTexture);
-    // var 
+    var rttProgram = buildShaderProgram(gl, rttShaders);
     
     // this stays per-renderer
     function setup_shaders() {
@@ -57,12 +56,17 @@ function RainRenderer(gl, shaders, textures){
             
         });
         fbo.deactivate();
+        gl.useProgram(rttProgram);
+        mat4.identity(mvMatrix); // reset the position for each piece of geometry
+        mat4.translate(mvMatrix, [0,0,-10]);
         // self.__setDefaultUniforms(self.shaderProgram, pMatrix, mvMatrix, dim);
-        // rtt.draw();
+        rtt.draw();
     }
 
     var gradientBuffer = new Buffer(gl, gradient_coords, 2, position);
     setup_shaders();
+    var sampler = self.gl.getUniformLocation(self.shaderProgram, "uSampler");
+    var rtt = new Rtt(gl, fbo.glTexture, sampler, position);
 
     this.render = function(time, dim, pMatrix, pMatrixInv) {
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);

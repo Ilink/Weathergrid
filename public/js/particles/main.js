@@ -15,7 +15,7 @@ $(document).ready(function(){
     // shader_loader.load(['rain_vs', 'rain_fs']);
     shader_loader.load(['sprite_vs', 'sprite_fs', 'rain_vs', 'rain_fs', 
         'background_fs', 'background_vs', 'laser_fs', 'laser_vs', 'blur_fs', 'blur_vs',
-        'composite_vs', 'composite_fs']);
+        'composite_vs', 'composite_fs', 'rttShaderFs', 'rttShaderVs']);
 
     $(document).on('shaders_loaded', function(e, shaders){
         var engine = new Engine($('canvas'));
@@ -30,6 +30,10 @@ $(document).ready(function(){
             fs: shaders['laser_fs.glsl'].text()
         };
         var background_shaders = {
+            vs: shaders['rttShaderVs.glsl'].text(),
+            fs: shaders['rttShaderFs.glsl'].text()
+        };
+        var rtt_shaders = {
             vs: shaders['background_vs.glsl'].text(),
             fs: shaders['background_fs.glsl'].text()
         };
@@ -67,7 +71,7 @@ $(document).ready(function(){
             'squid_large.png'
         );
 
-        var rainRenderer = new RainRenderer(gl, rain_shaders);
+        var rainRenderer = new RainRenderer(gl, rain_shaders, rtt_shaders);
 
         // var rain_renderer = new CompositeRenderer(gl, {
         //     shaders: rain_shaders, 

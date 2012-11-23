@@ -14,11 +14,13 @@ function RendererBase(args){
     }
 }
 
+// todo refctor, doing it this way is really slow
+// should store the values of the uniform locations, not fetch them here
 RendererBase.prototype.__setDefaultUniforms = function(program, pMatrix, mvMatrix, dim){
     this.gl.uniform2f( this.gl.getUniformLocation(program, 'resolution' ), dim.width, dim.height);
     this.gl.uniformMatrix4fv(this.gl.getUniformLocation(program, "uPMatrix"), false, pMatrix);
     this.gl.uniformMatrix4fv(this.gl.getUniformLocation(program, "uMVMatrix"), false, mvMatrix);
-    this.gl.uniform1i(this.gl.getUniformLocation(program, "uSampler"), 1);
+    // this.gl.uniform1i(this.gl.getUniformLocation(program, "uSampler"), 1);
 }
 
 RendererBase.prototype.initGeoBuffer = function(verts){

@@ -8,8 +8,9 @@ Displays the texture on a fullscreen quad
 
 
 // function Rtt(gl, texture, textureBuffer, sampler, attr){
-function Rtt(gl, texture){
-	var quad = new Geo(gl, geo_builder.fullScreenQuad);
+function Rtt(gl, texture, sampler, attr){
+	// var quad = new Geo(gl, geo_builder.fullScreenQuad);
+	var quad = new Buffer(gl, geo_builder.fullScreenQuad, 2, attr);
 
 	var coords = [
 	    0.0, 0.0,
@@ -30,18 +31,13 @@ function Rtt(gl, texture){
 
 	this.glTexture = gl.createTexture();
 	this.draw = function(){
-		// Bind the texture
-		// gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
-		// gl.vertexAttribPointer(attr, 2, gl.FLOAT, false, 0, 0); // itemsize (2) might be wrong - is it 3?
 		gl.activeTexture(gl.TEXTURE0);
-
-		// gl.bindTexture(gl.TEXTURE_2D, self.glTexture);
 		gl.bindTexture(gl.TEXTURE_2D, texture);
-		// gl.uniform1i(sampler, 0);
+		gl.uniform1i(sampler, 0);
 
+		quad.set();
 		// Draw the quad
 		gl.bindBuffer(gl.ARRAY_BUFFER, quad.glBuffer);
-		// gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
 }

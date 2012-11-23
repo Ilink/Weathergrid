@@ -1,7 +1,6 @@
 <script id="rain_fs" type="x-shader/fragment"> 
 
 	precision highp float;
-	// uniform float time;
 	uniform vec2 resolution;
 
 	void main( void ) {
