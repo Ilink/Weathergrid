@@ -49,14 +49,14 @@ function RainRenderer(gl, shaders, rttShaders){
 
             gl.bindBuffer(gl.ARRAY_BUFFER, geo.glBuffer);
             gl.vertexAttribPointer(position, geo.itemSize, gl.FLOAT, false, 0, 0);
-            // gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.numItems);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.numItems);
         });
         fbo.deactivate();
         gl.useProgram(rttProgram);
         mat4.identity(mvMatrix); // reset the position for each piece of geometry
-        // mat4.translate(mvMatrix, [0,0,-10]);
-        self.__setDefaultUniforms(self.shaderProgram, pMatrix, mvMatrix, dim);
-        // rtt.draw();
+        mat4.translate(mvMatrix, [0,0,-10]);
+        self.__setDefaultUniforms(rttProgram, pMatrix, mvMatrix, dim);
+        rtt.draw();
     }
 
     setup_shaders();
