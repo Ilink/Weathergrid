@@ -18,6 +18,8 @@ function RainRenderer(gl, shaders, textures){
         1.0, 1.0
     ];
     var fbo = new Fbo(gl, 256);
+    var rtt = new Rtt(gl, fbo.glTexture);
+    // var 
     
     // this stays per-renderer
     function setup_shaders() {
@@ -33,12 +35,12 @@ function RainRenderer(gl, shaders, textures){
 
     // this stays per-renderer
     function build(dim, pMatrix, pMatrixInv){
+        fbo.activate();
         $.each(self.geo, function(i, geo){
             mat4.identity(mvMatrix); // reset the position for each piece of geometry
             mat4.translate(mvMatrix, geo.trans);
             mat4.rotate(mvMatrix, 40, [0,0,1], mvMatrix);
 
-            fbo.activate();
             self.__setDefaultUniforms(self.shaderProgram, pMatrix, mvMatrix, dim);
 
             // Textures
@@ -52,8 +54,11 @@ function RainRenderer(gl, shaders, textures){
             gl.vertexAttribPointer(position, geo.buffer.itemSize, gl.FLOAT, false, 0, 0);
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, geo.buffer.numItems);
-            fbo.deactivate();
+            
         });
+        fbo.deactivate();
+        // self.__setDefaultUniforms(self.shaderProgram, pMatrix, mvMatrix, dim);
+        // rtt.draw();
     }
 
     var gradientBuffer = new Buffer(gl, gradient_coords, 2, position);

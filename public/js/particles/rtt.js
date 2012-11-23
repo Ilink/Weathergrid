@@ -8,8 +8,8 @@ Displays the texture on a fullscreen quad
 
 
 // function Rtt(gl, texture, textureBuffer, sampler, attr){
-function Rtt(gl, texture, sampler, attr){
-	var quad = new Geo(geo_builder.fullScreenQuad);
+function Rtt(gl, texture){
+	var quad = new Geo(gl, geo_builder.fullScreenQuad);
 
 	var coords = [
 	    0.0, 0.0,
@@ -37,11 +37,11 @@ function Rtt(gl, texture, sampler, attr){
 
 		// gl.bindTexture(gl.TEXTURE_2D, self.glTexture);
 		gl.bindTexture(gl.TEXTURE_2D, texture);
-		gl.uniform1i(sampler, 0);
+		// gl.uniform1i(sampler, 0);
 
 		// Draw the quad
 		gl.bindBuffer(gl.ARRAY_BUFFER, quad.glBuffer);
-		gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
+		// gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 	}
 }
