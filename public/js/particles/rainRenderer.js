@@ -58,7 +58,7 @@ function RainRenderer(gl, shaders, rttShaders){
         fbo.deactivate();
         gl.useProgram(rttProgram);
         mat4.identity(mvMatrix); // reset the position for each piece of geometry
-        mat4.translate(mvMatrix, [0,0,-10]);
+        // mat4.translate(mvMatrix, [0,0,-10]);
         // self.__setDefaultUniforms(self.shaderProgram, pMatrix, mvMatrix, dim);
         rtt.draw();
     }

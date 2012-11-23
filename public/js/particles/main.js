@@ -72,14 +72,6 @@ $(document).ready(function(){
         );
 
         var rainRenderer = new RainRenderer(gl, rain_shaders, rtt_shaders);
-
-        // var rain_renderer = new CompositeRenderer(gl, {
-        //     shaders: rain_shaders, 
-        //     compositeShaders: {
-        //         blurShaders: blur_shaders,
-        //         imageShader: composite_shaders
-        //     }
-        // });
         engine.add_renderer(rainRenderer);
 
         /*
