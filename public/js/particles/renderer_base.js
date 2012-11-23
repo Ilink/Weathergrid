@@ -23,23 +23,10 @@ RendererBase.prototype.__setDefaultUniforms = function(program, pMatrix, mvMatri
     // this.gl.uniform1i(this.gl.getUniformLocation(program, "uSampler"), 1);
 }
 
-RendererBase.prototype.initGeoBuffer = function(verts){
-    var buffer = this.gl.createBuffer();
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(verts), this.gl.STATIC_DRAW);
-    buffer.itemSize = 3;
-    buffer.numItems = verts.length/3;
-    return buffer;
-}
-
-//todo This should work with actual geo objects
 RendererBase.prototype.addGeo = function(verts, mat, textureName){
     var self = this;
-    var geo = {
-        verts: verts,
-        buffer: self.initGeoBuffer(verts),
-        trans: mat
-    }
+    var geo = new Geo(self.gl, verts);
+    geo.trans = mat;
     
     if(typeof textureName !== 'undefined'){
         geo.texture = new Texture(self.gl, textureName, self.gl.getUniformLocation(self.shaderProgram, 
