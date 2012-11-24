@@ -23,13 +23,16 @@ function RainRenderer(gl, shaders, rttShaders){
     // this stays per-renderer
     function setup_shaders() {
         position = gl.getAttribLocation(self.shaderProgram, "position");
-        gl.enableVertexAttribArray(position);
+        if(position > -1)
+            gl.enableVertexAttribArray(position);
 
-        // textureCoordAttribute = gl.getAttribLocation(self.shaderProgram, "aTextureCoord");
-        // gl.enableVertexAttribArray(textureCoordAttribute);
+        textureCoordAttribute = gl.getAttribLocation(self.shaderProgram, "aTextureCoord");
+        if(textureCoordAttribute > -1)
+            gl.enableVertexAttribArray(textureCoordAttribute);
 
         vertColor = gl.getAttribLocation(self.shaderProgram, "vertColor");
-        gl.enableVertexAttribArray(vertColor);
+        if(vertColor > -1)
+            gl.enableVertexAttribArray(vertColor);
     }
 
     // this stays per-renderer

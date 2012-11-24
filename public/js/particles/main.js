@@ -60,6 +60,8 @@ $(document).ready(function(){
             1,     1,     0.0  // top right
         ];
         background_renderer.addGeo(background_rect, [0,0,-40]);
+        // something weird happens if i just have the background renderer going
+        // separate the background renderer into its own file
         engine.add_renderer(background_renderer);
 
         var squid_renderer = new Renderer(gl, squid_shaders);
@@ -116,5 +118,6 @@ $(document).ready(function(){
         timeline.start();
 
         engine.start();
+        // engine.stop();
     });
 });

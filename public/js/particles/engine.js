@@ -79,6 +79,10 @@ function Engine(canvas){
         timeline.start();
     };
 
+    this.stop = function(){
+        timeline.stop();
+    };
+
     this.add_renderer = function(renderer){
         renderers.push(renderer);
     };
