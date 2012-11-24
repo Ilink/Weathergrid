@@ -10,7 +10,7 @@ Displays the texture on a fullscreen quad
 // function Rtt(gl, texture, textureBuffer, sampler, attr){
 function Rtt(gl, texture, sampler, attr){
 	// var quad = new Geo(gl, geo_builder.fullScreenQuad);
-	var quad = new Buffer(gl, geo_builder.fullScreenQuad, 2, attr);
+	var quad = new Buffer(gl, geo_builder.fullScreenQuad, 3, attr);
 
 	var coords = [
 	    0.0, 0.0,

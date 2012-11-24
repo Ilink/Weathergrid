@@ -29,11 +29,15 @@ function Fbo(gl, size){
 
 	this.activate = function(){
 		gl.bindFramebuffer(gl.FRAMEBUFFER, self.fbo);
+		gl.viewport(0, 0, size, size);
+
 		gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
 		gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, self.fbo.depthBuffer);
 	};
 
 	this.deactivate = function(){
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+		// gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		gl.viewport(0, 0, $('canvas').width(), $('canvas').height());
 	};
 }
